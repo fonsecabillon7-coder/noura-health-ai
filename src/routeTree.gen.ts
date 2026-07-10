@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as ProcessingRouteImport } from './routes/processing'
 import { Route as IntroRouteImport } from './routes/intro'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 
 const QuizRoute = QuizRouteImport.update({
@@ -29,6 +30,11 @@ const IntroRoute = IntroRouteImport.update({
   path: '/intro',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -37,12 +43,14 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/intro': typeof IntroRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/intro': typeof IntroRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
@@ -50,20 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/intro': typeof IntroRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/intro' | '/processing' | '/quiz'
+  fullPaths: '/' | '/dashboard' | '/intro' | '/processing' | '/quiz'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/intro' | '/processing' | '/quiz'
-  id: '__root__' | '/' | '/intro' | '/processing' | '/quiz'
+  to: '/' | '/dashboard' | '/intro' | '/processing' | '/quiz'
+  id: '__root__' | '/' | '/dashboard' | '/intro' | '/processing' | '/quiz'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRoute: typeof DashboardRoute
   IntroRoute: typeof IntroRoute
   ProcessingRoute: typeof ProcessingRoute
   QuizRoute: typeof QuizRoute
@@ -92,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IntroRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -104,6 +121,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRoute: DashboardRoute,
   IntroRoute: IntroRoute,
   ProcessingRoute: ProcessingRoute,
   QuizRoute: QuizRoute,

@@ -165,7 +165,7 @@ function ProgressRing({ size, progress, color, children }: { size: number; progr
   );
 }
 
-function MacroCard({ label, value, goal, unit, color, Icon }: { label: string; value: number; goal: number; unit: string; color: string; Icon: React.ComponentType<{ className?: string }> }) {
+function MacroCard({ label, value, goal, unit, color, Icon }: { label: string; value: number; goal: number; unit: string; color: string; Icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }) {
   return (
     <div className="glass-strong rounded-3xl p-4">
       <div className="text-xs text-muted-foreground">{label}</div>
