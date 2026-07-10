@@ -87,6 +87,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Noura AI — Eat Smarter. Live Better." },
       { name: "twitter:description", content: "AI nutrition assistant." },
+    ],
     links: [
       {
         rel: "stylesheet",
