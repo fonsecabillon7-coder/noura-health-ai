@@ -77,15 +77,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Noura AI — Eat Smarter. Live Better." },
+      { name: "description", content: "AI nutrition assistant: track meals, hydration, and generate recipes from your fridge." },
+      { name: "author", content: "Noura AI" },
+      { name: "theme-color", content: "#0a0d10" },
+      { property: "og:title", content: "Noura AI — Eat Smarter. Live Better." },
+      { property: "og:description", content: "Your AI nutrition assistant for smarter meals, hydration and recipes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
-    ],
+      { name: "twitter:title", content: "Noura AI — Eat Smarter. Live Better." },
+      { name: "twitter:description", content: "AI nutrition assistant." },
     links: [
       {
         rel: "stylesheet",
