@@ -9,40 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ShoppingRouteImport } from './routes/shopping'
-import { Route as ScanRouteImport } from './routes/scan'
-import { Route as RecipesRouteImport } from './routes/recipes'
 import { Route as QuizRouteImport } from './routes/quiz'
-import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProcessingRouteImport } from './routes/processing'
-import { Route as MealsRouteImport } from './routes/meals'
 import { Route as IntroRouteImport } from './routes/intro'
-import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedShoppingRouteImport } from './routes/_authenticated.shopping'
+import { Route as AuthenticatedScanRouteImport } from './routes/_authenticated.scan'
+import { Route as AuthenticatedRecipesRouteImport } from './routes/_authenticated.recipes'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated.profile'
+import { Route as AuthenticatedMealsRouteImport } from './routes/_authenticated.meals'
+import { Route as AuthenticatedFocosRouteImport } from './routes/_authenticated.focos'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
+import { Route as AuthenticatedFocosHistoryRouteImport } from './routes/_authenticated.focos.history'
 
-const ShoppingRoute = ShoppingRouteImport.update({
-  id: '/shopping',
-  path: '/shopping',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ScanRoute = ScanRouteImport.update({
-  id: '/scan',
-  path: '/scan',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecipesRoute = RecipesRouteImport.update({
-  id: '/recipes',
-  path: '/recipes',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const QuizRoute = QuizRouteImport.update({
   id: '/quiz',
   path: '/quiz',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProcessingRoute = ProcessingRouteImport.update({
@@ -50,19 +34,18 @@ const ProcessingRoute = ProcessingRouteImport.update({
   path: '/processing',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MealsRoute = MealsRouteImport.update({
-  id: '/meals',
-  path: '/meals',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IntroRoute = IntroRouteImport.update({
   id: '/intro',
   path: '/intro',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -70,131 +53,160 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedShoppingRoute = AuthenticatedShoppingRouteImport.update({
+  id: '/shopping',
+  path: '/shopping',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedScanRoute = AuthenticatedScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedRecipesRoute = AuthenticatedRecipesRouteImport.update({
+  id: '/recipes',
+  path: '/recipes',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedMealsRoute = AuthenticatedMealsRouteImport.update({
+  id: '/meals',
+  path: '/meals',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedFocosRoute = AuthenticatedFocosRouteImport.update({
+  id: '/focos',
+  path: '/focos',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedFocosHistoryRoute =
+  AuthenticatedFocosHistoryRouteImport.update({
+    id: '/history',
+    path: '/history',
+    getParentRoute: () => AuthenticatedFocosRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/auth': typeof AuthRoute
   '/intro': typeof IntroRoute
-  '/meals': typeof MealsRoute
   '/processing': typeof ProcessingRoute
-  '/profile': typeof ProfileRoute
   '/quiz': typeof QuizRoute
-  '/recipes': typeof RecipesRoute
-  '/scan': typeof ScanRoute
-  '/shopping': typeof ShoppingRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/focos': typeof AuthenticatedFocosRouteWithChildren
+  '/meals': typeof AuthenticatedMealsRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/recipes': typeof AuthenticatedRecipesRoute
+  '/scan': typeof AuthenticatedScanRoute
+  '/shopping': typeof AuthenticatedShoppingRoute
+  '/focos/history': typeof AuthenticatedFocosHistoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/auth': typeof AuthRoute
   '/intro': typeof IntroRoute
-  '/meals': typeof MealsRoute
   '/processing': typeof ProcessingRoute
-  '/profile': typeof ProfileRoute
   '/quiz': typeof QuizRoute
-  '/recipes': typeof RecipesRoute
-  '/scan': typeof ScanRoute
-  '/shopping': typeof ShoppingRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/focos': typeof AuthenticatedFocosRouteWithChildren
+  '/meals': typeof AuthenticatedMealsRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/recipes': typeof AuthenticatedRecipesRoute
+  '/scan': typeof AuthenticatedScanRoute
+  '/shopping': typeof AuthenticatedShoppingRoute
+  '/focos/history': typeof AuthenticatedFocosHistoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/auth': typeof AuthRoute
   '/intro': typeof IntroRoute
-  '/meals': typeof MealsRoute
   '/processing': typeof ProcessingRoute
-  '/profile': typeof ProfileRoute
   '/quiz': typeof QuizRoute
-  '/recipes': typeof RecipesRoute
-  '/scan': typeof ScanRoute
-  '/shopping': typeof ShoppingRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/focos': typeof AuthenticatedFocosRouteWithChildren
+  '/_authenticated/meals': typeof AuthenticatedMealsRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/recipes': typeof AuthenticatedRecipesRoute
+  '/_authenticated/scan': typeof AuthenticatedScanRoute
+  '/_authenticated/shopping': typeof AuthenticatedShoppingRoute
+  '/_authenticated/focos/history': typeof AuthenticatedFocosHistoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/dashboard'
+    | '/auth'
     | '/intro'
-    | '/meals'
     | '/processing'
-    | '/profile'
     | '/quiz'
+    | '/dashboard'
+    | '/focos'
+    | '/meals'
+    | '/profile'
     | '/recipes'
     | '/scan'
     | '/shopping'
+    | '/focos/history'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/dashboard'
+    | '/auth'
     | '/intro'
-    | '/meals'
     | '/processing'
-    | '/profile'
     | '/quiz'
+    | '/dashboard'
+    | '/focos'
+    | '/meals'
+    | '/profile'
     | '/recipes'
     | '/scan'
     | '/shopping'
+    | '/focos/history'
   id:
     | '__root__'
     | '/'
-    | '/dashboard'
+    | '/_authenticated'
+    | '/auth'
     | '/intro'
-    | '/meals'
     | '/processing'
-    | '/profile'
     | '/quiz'
-    | '/recipes'
-    | '/scan'
-    | '/shopping'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/focos'
+    | '/_authenticated/meals'
+    | '/_authenticated/profile'
+    | '/_authenticated/recipes'
+    | '/_authenticated/scan'
+    | '/_authenticated/shopping'
+    | '/_authenticated/focos/history'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AuthRoute: typeof AuthRoute
   IntroRoute: typeof IntroRoute
-  MealsRoute: typeof MealsRoute
   ProcessingRoute: typeof ProcessingRoute
-  ProfileRoute: typeof ProfileRoute
   QuizRoute: typeof QuizRoute
-  RecipesRoute: typeof RecipesRoute
-  ScanRoute: typeof ScanRoute
-  ShoppingRoute: typeof ShoppingRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/shopping': {
-      id: '/shopping'
-      path: '/shopping'
-      fullPath: '/shopping'
-      preLoaderRoute: typeof ShoppingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/scan': {
-      id: '/scan'
-      path: '/scan'
-      fullPath: '/scan'
-      preLoaderRoute: typeof ScanRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recipes': {
-      id: '/recipes'
-      path: '/recipes'
-      fullPath: '/recipes'
-      preLoaderRoute: typeof RecipesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/quiz': {
       id: '/quiz'
       path: '/quiz'
       fullPath: '/quiz'
       preLoaderRoute: typeof QuizRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/processing': {
@@ -204,13 +216,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProcessingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/meals': {
-      id: '/meals'
-      path: '/meals'
-      fullPath: '/meals'
-      preLoaderRoute: typeof MealsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/intro': {
       id: '/intro'
       path: '/intro'
@@ -218,11 +223,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IntroRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -232,31 +244,108 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/shopping': {
+      id: '/_authenticated/shopping'
+      path: '/shopping'
+      fullPath: '/shopping'
+      preLoaderRoute: typeof AuthenticatedShoppingRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/scan': {
+      id: '/_authenticated/scan'
+      path: '/scan'
+      fullPath: '/scan'
+      preLoaderRoute: typeof AuthenticatedScanRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/recipes': {
+      id: '/_authenticated/recipes'
+      path: '/recipes'
+      fullPath: '/recipes'
+      preLoaderRoute: typeof AuthenticatedRecipesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/meals': {
+      id: '/_authenticated/meals'
+      path: '/meals'
+      fullPath: '/meals'
+      preLoaderRoute: typeof AuthenticatedMealsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/focos': {
+      id: '/_authenticated/focos'
+      path: '/focos'
+      fullPath: '/focos'
+      preLoaderRoute: typeof AuthenticatedFocosRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/focos/history': {
+      id: '/_authenticated/focos/history'
+      path: '/history'
+      fullPath: '/focos/history'
+      preLoaderRoute: typeof AuthenticatedFocosHistoryRouteImport
+      parentRoute: typeof AuthenticatedFocosRoute
+    }
   }
 }
 
+interface AuthenticatedFocosRouteChildren {
+  AuthenticatedFocosHistoryRoute: typeof AuthenticatedFocosHistoryRoute
+}
+
+const AuthenticatedFocosRouteChildren: AuthenticatedFocosRouteChildren = {
+  AuthenticatedFocosHistoryRoute: AuthenticatedFocosHistoryRoute,
+}
+
+const AuthenticatedFocosRouteWithChildren =
+  AuthenticatedFocosRoute._addFileChildren(AuthenticatedFocosRouteChildren)
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedFocosRoute: typeof AuthenticatedFocosRouteWithChildren
+  AuthenticatedMealsRoute: typeof AuthenticatedMealsRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedRecipesRoute: typeof AuthenticatedRecipesRoute
+  AuthenticatedScanRoute: typeof AuthenticatedScanRoute
+  AuthenticatedShoppingRoute: typeof AuthenticatedShoppingRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedFocosRoute: AuthenticatedFocosRouteWithChildren,
+  AuthenticatedMealsRoute: AuthenticatedMealsRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedRecipesRoute: AuthenticatedRecipesRoute,
+  AuthenticatedScanRoute: AuthenticatedScanRoute,
+  AuthenticatedShoppingRoute: AuthenticatedShoppingRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AuthRoute: AuthRoute,
   IntroRoute: IntroRoute,
-  MealsRoute: MealsRoute,
   ProcessingRoute: ProcessingRoute,
-  ProfileRoute: ProfileRoute,
   QuizRoute: QuizRoute,
-  RecipesRoute: RecipesRoute,
-  ScanRoute: ScanRoute,
-  ShoppingRoute: ShoppingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

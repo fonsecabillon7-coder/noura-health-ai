@@ -7,6 +7,7 @@ import {
   Check, ChevronLeft, Droplets,
 } from "lucide-react";
 import { patchOnboarding } from "@/lib/noura";
+import { LangSwitcher } from "@/components/lang-switcher";
 
 export const Route = createFileRoute("/quiz")({ component: Quiz });
 
@@ -73,6 +74,7 @@ function Quiz() {
 
   return (
     <div className="relative min-h-screen">
+      <div className="absolute right-5 top-14 z-20"><LangSwitcher /></div>
       <div className="mx-auto flex min-h-screen max-w-md flex-col px-6 pt-12 pb-8">
         {/* Header */}
         <div className="flex items-center gap-3">
