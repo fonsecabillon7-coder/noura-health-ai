@@ -3,7 +3,7 @@ import { BottomNav } from "@/components/bottom-nav";
 import { useState } from "react";
 import { Check } from "lucide-react";
 
-export const Route = createFileRoute("/shopping")({ component: Shopping });
+export const Route = createFileRoute("/_authenticated/shopping")({ component: Shopping });
 
 const groups = [
   { cat: "Vegetables", items: ["Spinach", "Tomatoes", "Bell Pepper"] },
