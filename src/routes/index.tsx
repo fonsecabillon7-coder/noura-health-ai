@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Camera, Flame, Droplets, ChefHat, Sparkles } from "lucide-react";
+import { Camera, Flame, ChefHat, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { LangSwitcher } from "@/components/lang-switcher";
 
 export const Route = createFileRoute("/")({
   component: Welcome,
@@ -29,6 +31,7 @@ const scenes = [
 ];
 
 function Welcome() {
+  const { t } = useTranslation();
   const [scene, setScene] = useState(0);
 
   useEffect(() => {
@@ -45,12 +48,14 @@ function Welcome() {
       </div>
 
       <div className="relative z-10 mx-auto flex min-h-screen max-w-md flex-col px-6 pt-14 pb-10">
-        {/* Brand */}
-        <div className="flex items-center gap-2">
-          <div className="grid h-9 w-9 place-items-center rounded-2xl bg-gradient-to-br from-emerald to-emerald/60 shadow-emerald-glow">
-            <Sparkles className="h-4 w-4 text-black" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="grid h-9 w-9 place-items-center rounded-2xl bg-gradient-to-br from-emerald to-emerald/60 shadow-emerald-glow">
+              <Sparkles className="h-4 w-4 text-black" />
+            </div>
+            <span className="text-lg font-semibold tracking-tight">Noura AI</span>
           </div>
-          <span className="text-lg font-semibold tracking-tight">Noura AI</span>
+          <LangSwitcher />
         </div>
 
         {/* Phone mockup */}
@@ -82,9 +87,9 @@ function Welcome() {
             transition={{ delay: 0.2 }}
             className="text-gradient-premium font-display text-4xl font-bold leading-tight tracking-tight"
           >
-            Eat Smarter.
+            {t("landing.tagline1")}
             <br />
-            Live Better.
+            {t("landing.tagline2")}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -92,7 +97,7 @@ function Welcome() {
             transition={{ delay: 0.35 }}
             className="mx-auto mt-3 max-w-xs text-[15px] leading-relaxed text-muted-foreground"
           >
-            Track nutrition, stay hydrated and cook smarter with AI.
+            {t("landing.subtitle")}
           </motion.p>
         </div>
 
@@ -110,12 +115,12 @@ function Welcome() {
               transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
               className="relative overflow-hidden rounded-[28px] bg-white py-5 text-center text-[17px] font-semibold text-black shadow-premium"
             >
-              <span className="relative z-10">Get Started</span>
+              <span className="relative z-10">{t("common.getStarted")}</span>
               <div className="animate-shimmer absolute inset-0 opacity-40" />
             </motion.div>
           </Link>
           <p className="mt-4 text-center text-xs text-muted-foreground">
-            Personalized in under 60 seconds
+            {t("landing.footer")}
           </p>
         </motion.div>
       </div>

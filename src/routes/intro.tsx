@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { Heart, ScanLine, Droplets, ChefHat, Sparkles, Camera, ShoppingCart, BarChart3, Bot, Salad } from "lucide-react";
+import { Heart, Droplets, ChefHat, Camera, ShoppingCart, BarChart3, Bot, Salad } from "lucide-react";
+import { LangSwitcher } from "@/components/lang-switcher";
 
 export const Route = createFileRoute("/intro")({
   component: Intro,
@@ -48,6 +49,7 @@ function Intro() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
+      <div className="absolute right-5 top-14 z-20"><LangSwitcher /></div>
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 right-0 h-[400px] w-[400px] rounded-full bg-emerald/15 blur-[100px]" />
       </div>

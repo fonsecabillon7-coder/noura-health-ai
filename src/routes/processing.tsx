@@ -20,7 +20,7 @@ function Processing() {
 
   useEffect(() => {
     if (i >= steps.length) {
-      const t = setTimeout(() => nav({ to: "/dashboard" }), 900);
+      const t = setTimeout(() => nav({ to: "/auth" }), 900);
       return () => clearTimeout(t);
     }
     const t = setTimeout(() => setI((v) => v + 1), 700);
