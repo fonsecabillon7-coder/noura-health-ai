@@ -18,6 +18,8 @@ function Dashboard() {
   const addWater = useServerFn(logWater);
   const qc = useQueryClient();
   const { data } = useQuery({ queryKey: ["dashboard"], queryFn: () => fetchDash() });
+  const [pulse, setPulse] = useState<number | null>(null);
+  useEffect(() => { if (pulse) { const t = setTimeout(() => setPulse(null), 900); return () => clearTimeout(t); } }, [pulse]);
   const mutate = useMutation({
     mutationFn: (ml: number) => addWater({ data: { ml } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["dashboard"] }),
