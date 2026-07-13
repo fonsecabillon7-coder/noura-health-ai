@@ -22,6 +22,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedMealsRouteImport } from './routes/_authenticated.meals'
 import { Route as AuthenticatedFocosRouteImport } from './routes/_authenticated.focos'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
+import { Route as AuthenticatedAddRouteImport } from './routes/_authenticated.add'
 import { Route as AuthenticatedFocosHistoryRouteImport } from './routes/_authenticated.focos.history'
 
 const QuizRoute = QuizRouteImport.update({
@@ -88,6 +89,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAddRoute = AuthenticatedAddRouteImport.update({
+  id: '/add',
+  path: '/add',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedFocosHistoryRoute =
   AuthenticatedFocosHistoryRouteImport.update({
     id: '/history',
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/intro': typeof IntroRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
+  '/add': typeof AuthenticatedAddRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/focos': typeof AuthenticatedFocosRouteWithChildren
   '/meals': typeof AuthenticatedMealsRoute
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/intro': typeof IntroRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
+  '/add': typeof AuthenticatedAddRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/focos': typeof AuthenticatedFocosRouteWithChildren
   '/meals': typeof AuthenticatedMealsRoute
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/intro': typeof IntroRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
+  '/_authenticated/add': typeof AuthenticatedAddRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/focos': typeof AuthenticatedFocosRouteWithChildren
   '/_authenticated/meals': typeof AuthenticatedMealsRoute
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/intro'
     | '/processing'
     | '/quiz'
+    | '/add'
     | '/dashboard'
     | '/focos'
     | '/meals'
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/intro'
     | '/processing'
     | '/quiz'
+    | '/add'
     | '/dashboard'
     | '/focos'
     | '/meals'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/intro'
     | '/processing'
     | '/quiz'
+    | '/_authenticated/add'
     | '/_authenticated/dashboard'
     | '/_authenticated/focos'
     | '/_authenticated/meals'
@@ -293,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/add': {
+      id: '/_authenticated/add'
+      path: '/add'
+      fullPath: '/add'
+      preLoaderRoute: typeof AuthenticatedAddRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/focos/history': {
       id: '/_authenticated/focos/history'
       path: '/history'
@@ -315,6 +334,7 @@ const AuthenticatedFocosRouteWithChildren =
   AuthenticatedFocosRoute._addFileChildren(AuthenticatedFocosRouteChildren)
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedAddRoute: typeof AuthenticatedAddRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFocosRoute: typeof AuthenticatedFocosRouteWithChildren
   AuthenticatedMealsRoute: typeof AuthenticatedMealsRoute
@@ -325,6 +345,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAddRoute: AuthenticatedAddRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFocosRoute: AuthenticatedFocosRouteWithChildren,
   AuthenticatedMealsRoute: AuthenticatedMealsRoute,
@@ -349,13 +370,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
