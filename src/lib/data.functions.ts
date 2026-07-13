@@ -124,6 +124,9 @@ export const getWaterHistory = createServerFn({ method: "GET" })
       else break;
     }
     return { days, goal, avg, streak };
+  });
+
+
 
 // ============ Habits ============
 const DEFAULT_HABITS = [
