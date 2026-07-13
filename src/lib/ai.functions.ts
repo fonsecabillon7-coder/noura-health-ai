@@ -71,7 +71,7 @@ export const analyzeFoodImage = createServerFn({ method: "POST" })
     const gateway = createLovableAiGatewayProvider(key);
     const model = gateway("google/gemini-3-flash-preview");
 
-    const prompt = `You are a nutrition expert. Analyze this food photo and estimate nutrition for a typical single serving as shown.
+    const prompt = `You are a nutrition expert. Analyze this food photo and estimate nutrition for a typical single serving as shown. Also list the detected ingredients (concise common names, no brands, no quantities).
 Respond in ${langLabel(lang)}. Return realistic estimates. Confidence is 0-1.`;
 
     try {
