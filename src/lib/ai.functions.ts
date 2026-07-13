@@ -23,7 +23,40 @@ const foodSchema = z.object({
   fiber: z.number(),
   portion: z.string(),
   confidence: z.number(),
+  ingredients: z.array(z.string()).default([]),
 });
+
+const ingredientsSchema = z.object({
+  ingredients: z.array(z.string()),
+});
+
+export const detectIngredients = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ imageDataUrl: z.string().min(20) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const key = process.env.LOVABLE_API_KEY;
+    if (!key) throw new Error("Missing LOVABLE_API_KEY");
+    const lang = await getUserLanguage(context.supabase, context.userId);
+    const gateway = createLovableAiGatewayProvider(key);
+    const model = gateway("google/gemini-3-flash-preview");
+    const prompt = `Identify every distinct food ingredient visible in this photo (fridge, counter, pantry, or a dish). Return a concise list of common ingredient names in ${langLabel(lang)}. No brands, no quantities.`;
+    try {
+      const { output } = await generateText({
+        model,
+        output: Output.object({ schema: ingredientsSchema }),
+        messages: [{ role: "user", content: [
+          { type: "text", text: prompt },
+          { type: "image", image: data.imageDataUrl },
+        ] }],
+      });
+      return output;
+    } catch (error) {
+      if (NoObjectGeneratedError.isInstance(error)) throw new Error("Could not detect ingredients");
+      throw error;
+    }
+  });
 
 export const analyzeFoodImage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -38,7 +71,7 @@ export const analyzeFoodImage = createServerFn({ method: "POST" })
     const gateway = createLovableAiGatewayProvider(key);
     const model = gateway("google/gemini-3-flash-preview");
 
-    const prompt = `You are a nutrition expert. Analyze this food photo and estimate nutrition for a typical single serving as shown.
+    const prompt = `You are a nutrition expert. Analyze this food photo and estimate nutrition for a typical single serving as shown. Also list the detected ingredients (concise common names, no brands, no quantities).
 Respond in ${langLabel(lang)}. Return realistic estimates. Confidence is 0-1.`;
 
     try {
