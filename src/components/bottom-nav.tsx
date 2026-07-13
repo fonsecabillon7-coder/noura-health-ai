@@ -43,7 +43,7 @@ export function BottomNav() {
               );
             })}
           </div>
-          <Link to="/scan" className="grid h-14 w-14 place-items-center rounded-full bg-white text-black shadow-premium">
+          <Link to="/add" className="grid h-14 w-14 place-items-center rounded-full bg-white text-black shadow-premium">
             <Plus className="h-6 w-6" strokeWidth={2.6} />
           </Link>
         </div>
