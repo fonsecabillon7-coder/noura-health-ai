@@ -92,6 +92,39 @@ export const logWater = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const getWaterHistory = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const from = new Date(); from.setDate(from.getDate() - 29); from.setHours(0,0,0,0);
+    const { data } = await context.supabase
+      .from("water_logs").select("ml, logged_at")
+      .eq("user_id", context.userId)
+      .gte("logged_at", from.toISOString());
+    const byDay: Record<string, number> = {};
+    (data ?? []).forEach((r: any) => {
+      const d = r.logged_at.slice(0, 10);
+      byDay[d] = (byDay[d] ?? 0) + Number(r.ml);
+    });
+    const days: { date: string; ml: number }[] = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      days.push({ date: key, ml: byDay[key] ?? 0 });
+    }
+    const { data: profile } = await context.supabase
+      .from("profiles").select("water_goal_ml").eq("user_id", context.userId).maybeSingle();
+    const goal = (profile as any)?.water_goal_ml ?? 2000;
+    const active = days.filter((d) => d.ml > 0);
+    const avg = active.length ? Math.round(active.reduce((s, d) => s + d.ml, 0) / active.length) : 0;
+    // streak of days meeting goal
+    let streak = 0;
+    for (let i = days.length - 1; i >= 0; i--) {
+      if (days[i].ml >= goal) streak++;
+      else if (i !== days.length - 1) break;
+      else break;
+    }
+    return { days, goal, avg, streak };
+
 // ============ Habits ============
 const DEFAULT_HABITS = [
   { name: "Drink water", icon: "💧", category: "hydration", sort_order: 1 },
