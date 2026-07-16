@@ -65,6 +65,16 @@ function RecipesPage() {
 
   return (
     <div className="min-h-screen">
+      {showCamera && (
+        <LiveCamera
+          label={t("recipes.scanFridge", { defaultValue: "Scan ingredients" }) as string}
+          onCapture={(url) => detectMut.mutate(url)}
+          onClose={() => nav({ to: "/recipes", search: {} })}
+          busy={detectMut.isPending}
+          busyLabel={t("common.generating") as string}
+        />
+      )}
+
       <div className="mx-auto max-w-md px-5 pt-14">
         <div className="flex items-center justify-between">
           <h1 className="font-display text-3xl font-bold tracking-tight">{t("recipes.title")}</h1>
