@@ -72,16 +72,13 @@ function RecipesPage() {
         </div>
         <p className="mt-1 text-sm text-muted-foreground">{t("recipes.subtitle")}</p>
 
-        <input ref={camRef} type="file" accept="image/*" capture="environment" hidden onChange={(e) => onFile(e.target.files?.[0])} />
-        <input ref={galRef} type="file" accept="image/*" hidden onChange={(e) => onFile(e.target.files?.[0])} />
-
         <div className="glass-strong mt-5 rounded-[24px] p-4">
           <div className="mb-3 flex gap-2">
-            <button onClick={() => camRef.current?.click()} disabled={detectMut.isPending} className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white/8 py-2.5 text-xs font-semibold disabled:opacity-60">
+            <button onClick={() => nav({ to: "/recipes", search: { scan: "1" } })} disabled={detectMut.isPending} className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white/8 py-2.5 text-xs font-semibold disabled:opacity-60">
               {detectMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />} {t("recipes.scanFridge", { defaultValue: "Scan fridge/pantry" })}
             </button>
-            <button onClick={() => galRef.current?.click()} className="rounded-2xl bg-white/8 px-4 py-2.5 text-xs font-semibold">📁</button>
           </div>
+
 
           <div className="mb-2 flex flex-wrap gap-1.5">
             {ingredients.map((ing, i) => (
