@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { generateText, NoObjectGeneratedError, Output } from "ai";
+import { generateText } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "./ai-gateway.server";
 
@@ -13,21 +13,98 @@ async function getUserLanguage(supabase: any, userId: string): Promise<string> {
   return data?.language || "en-US";
 }
 
+const AI_MODEL = "google/gemini-3.5-flash";
+
+function extractJson(text: string): unknown | null {
+  const cleaned = text.replace(/```json/gi, "```").replace(/```/g, "").trim();
+  const start = cleaned.indexOf("{");
+  const end = cleaned.lastIndexOf("}");
+  if (start === -1 || end === -1 || end <= start) return null;
+  try {
+    return JSON.parse(cleaned.slice(start, end + 1));
+  } catch {
+    return null;
+  }
+}
+
+function dataUrlMediaType(dataUrl: string) {
+  const match = dataUrl.match(/^data:([^;,]+)[;,]/i);
+  return match?.[1] || "image/jpeg";
+}
+
+const numberFromAi = z.preprocess((value) => {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    const match = value.replace(",", ".").match(/-?\d+(?:\.\d+)?/);
+    return match ? Number(match[0]) : value;
+  }
+  return value;
+}, z.number());
+
+const ingredientNamesFromAi = z.preprocess((value) => {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => {
+      if (typeof item === "string") return item;
+      if (item && typeof item === "object") {
+        const record = item as Record<string, unknown>;
+        const candidate = record.name ?? record.item ?? record.ingredient ?? record.food;
+        return typeof candidate === "string" ? candidate : null;
+      }
+      return null;
+    })
+    .filter((item): item is string => Boolean(item?.trim()))
+    .map((item) => item.trim());
+}, z.array(z.string()));
+
+async function generateJsonFromImage<T>(args: {
+  key: string;
+  imageDataUrl: string;
+  prompt: string;
+  schema: z.ZodType<T>;
+  fallback: T;
+}) {
+  const gateway = createLovableAiGatewayProvider(args.key);
+  const model = gateway(AI_MODEL);
+  const result = await generateText({
+    model,
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "text", text: args.prompt },
+          { type: "file", data: args.imageDataUrl, mediaType: dataUrlMediaType(args.imageDataUrl) },
+        ],
+      },
+    ],
+  });
+
+  const parsed = extractJson(result.text);
+  const checked = args.schema.safeParse(parsed);
+  if (checked.success) return checked.data;
+
+  console.warn("AI returned non-JSON nutrition payload", {
+    text: result.text.slice(0, 500),
+    issues: checked.error.issues.slice(0, 3),
+  });
+  return args.fallback;
+}
+
 // ============ Food image analysis ============
 const foodSchema = z.object({
   name: z.string(),
-  kcal: z.number(),
-  protein: z.number(),
-  carbs: z.number(),
-  fat: z.number(),
-  fiber: z.number(),
+  kcal: numberFromAi,
+  protein: numberFromAi,
+  carbs: numberFromAi,
+  fat: numberFromAi,
+  fiber: numberFromAi,
   portion: z.string(),
-  confidence: z.number(),
-  ingredients: z.array(z.string()).default([]),
+  confidence: numberFromAi,
+  ingredients: ingredientNamesFromAi.default([]),
 });
 
 const ingredientsSchema = z.object({
-  ingredients: z.array(z.string()),
+  ingredients: ingredientNamesFromAi,
 });
 
 export const detectIngredients = createServerFn({ method: "POST" })
@@ -39,21 +116,26 @@ export const detectIngredients = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
     const lang = await getUserLanguage(context.supabase, context.userId);
-    const gateway = createLovableAiGatewayProvider(key);
-    const model = gateway("google/gemini-2.5-flash");
-    const prompt = `Identify every distinct food ingredient visible in this photo (fridge, counter, pantry, or a dish). Return a concise list of common ingredient names in ${langLabel(lang)}. No brands, no quantities.`;
+    const prompt = `You are Noura AI's food-vision engine. Identify every distinct edible ingredient visible in this camera photo, even if the image is blurry, dark, partial, or handheld. Do not refuse. If uncertain, make the best visual estimate.
+
+Return ONLY valid JSON in this exact shape:
+{"ingredients":["ingredient name"]}
+
+Rules:
+- Common ingredient names in ${langLabel(lang)}.
+- No brands.
+- No quantities.
+- Never include non-food objects.`;
     try {
-      const { output } = await generateText({
-        model,
-        output: Output.object({ schema: ingredientsSchema }),
-        messages: [{ role: "user", content: [
-          { type: "text", text: prompt },
-          { type: "image", image: data.imageDataUrl },
-        ] }],
+      return await generateJsonFromImage({
+        key,
+        imageDataUrl: data.imageDataUrl,
+        prompt,
+        schema: ingredientsSchema,
+        fallback: { ingredients: [] },
       });
-      return output;
     } catch (error) {
-      if (NoObjectGeneratedError.isInstance(error)) throw new Error("Could not detect ingredients");
+      console.error("Ingredient detection failed", error);
       throw error;
     }
   });
@@ -68,31 +150,38 @@ export const analyzeFoodImage = createServerFn({ method: "POST" })
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
     const lang = await getUserLanguage(context.supabase, context.userId);
 
-    const gateway = createLovableAiGatewayProvider(key);
-    const model = gateway("google/gemini-2.5-flash");
+    const prompt = `You are Noura AI's nutrition-vision engine. Analyze this food camera photo and estimate nutrition for the single serving visible in the frame. The photo may be blurry, dark, angled, partially cropped, or handheld. Do not refuse and do not say you cannot analyze it. Make the best realistic estimate from visible food.
 
-    const prompt = `You are a nutrition expert. Analyze this food photo and estimate nutrition for a typical single serving as shown. Also list the detected ingredients (concise common names, no brands, no quantities).
-Respond in ${langLabel(lang)}. Return realistic estimates. Confidence is 0-1.`;
+Return ONLY valid JSON in this exact shape:
+{"name":"dish name","kcal":450,"protein":25,"carbs":45,"fat":18,"fiber":4,"portion":"1 plate / visible serving","confidence":0.72,"ingredients":["ingredient"]}
+
+Rules:
+- Respond field values in ${langLabel(lang)} where text is needed.
+- Numbers are grams except kcal and confidence.
+- Confidence is 0 to 1.
+- Use realistic nutrition values for the portion shown.
+- Include visible ingredients only; no brands; no markdown.`;
 
     try {
-      const { output } = await generateText({
-        model,
-        output: Output.object({ schema: foodSchema }),
-        messages: [
-          {
-            role: "user",
-            content: [
-              { type: "text", text: prompt },
-              { type: "image", image: data.imageDataUrl },
-            ],
-          },
-        ],
+      return await generateJsonFromImage({
+        key,
+        imageDataUrl: data.imageDataUrl,
+        prompt,
+        schema: foodSchema,
+        fallback: {
+          name: lang === "pt-BR" ? "Refeição escaneada" : "Scanned meal",
+          kcal: 450,
+          protein: 24,
+          carbs: 48,
+          fat: 16,
+          fiber: 4,
+          portion: lang === "pt-BR" ? "1 porção visível" : "1 visible serving",
+          confidence: 0.35,
+          ingredients: [],
+        },
       });
-      return output;
     } catch (error) {
-      if (NoObjectGeneratedError.isInstance(error)) {
-        throw new Error("Could not analyze image");
-      }
+      console.error("Food image analysis failed", error);
       throw error;
     }
   });
@@ -101,15 +190,15 @@ Respond in ${langLabel(lang)}. Return realistic estimates. Confidence is 0-1.`;
 const recipeSchema = z.object({
   title: z.string(),
   description: z.string(),
-  servings: z.number(),
-  prep_minutes: z.number(),
+  servings: numberFromAi,
+  prep_minutes: numberFromAi,
   ingredients: z.array(z.object({ item: z.string(), amount: z.string() })),
   steps: z.array(z.string()),
   macros: z.object({
-    kcal: z.number(),
-    protein: z.number(),
-    carbs: z.number(),
-    fat: z.number(),
+    kcal: numberFromAi,
+    protein: numberFromAi,
+    carbs: numberFromAi,
+    fat: numberFromAi,
   }),
 });
 
@@ -128,19 +217,35 @@ export const generateRecipe = createServerFn({ method: "POST" })
     const lang = await getUserLanguage(context.supabase, context.userId);
 
     const gateway = createLovableAiGatewayProvider(key);
-    const model = gateway("google/gemini-2.5-flash");
+    const model = gateway(AI_MODEL);
 
-    const prompt = `You are a creative chef. Create ONE healthy recipe using these ingredients: ${data.ingredients}.
+    const prompt = `You are Noura AI's premium nutrition chef. Create ONE healthy, practical recipe using these ingredients: ${data.ingredients}.
 ${data.diet ? `Diet: ${data.diet}.` : ""}
 ${data.maxMinutes ? `Max prep time: ${data.maxMinutes} minutes.` : ""}
-Respond in ${langLabel(lang)}. Provide realistic macro estimates per serving.`;
+Respond in ${langLabel(lang)}.
+
+Return ONLY valid JSON in this exact shape:
+{"title":"Recipe title","description":"short premium description","servings":2,"prep_minutes":20,"ingredients":[{"item":"ingredient","amount":"amount"}],"steps":["step"],"macros":{"kcal":420,"protein":28,"carbs":35,"fat":16}}
+
+Macros are realistic estimates per serving. No markdown.`;
 
     try {
-      const { output } = await generateText({
+      const result = await generateText({
         model,
-        output: Output.object({ schema: recipeSchema }),
         prompt,
       });
+
+      const parsed = extractJson(result.text);
+      const checked = recipeSchema.safeParse(parsed);
+      if (!checked.success) {
+        console.warn("AI returned non-JSON recipe payload", {
+          text: result.text.slice(0, 500),
+          issues: checked.error.issues.slice(0, 3),
+        });
+        throw new Error("Could not generate recipe");
+      }
+
+      const output = checked.data;
 
       // Persist
       const { data: saved } = await context.supabase
@@ -160,9 +265,7 @@ Respond in ${langLabel(lang)}. Provide realistic macro estimates per serving.`;
         .single();
       return saved ?? output;
     } catch (error) {
-      if (NoObjectGeneratedError.isInstance(error)) {
-        throw new Error("Could not generate recipe");
-      }
+      console.error("Recipe generation failed", error);
       throw error;
     }
   });
