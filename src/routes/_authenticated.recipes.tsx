@@ -1,14 +1,15 @@
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { BottomNav } from "@/components/bottom-nav";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { generateRecipe, detectIngredients } from "@/lib/ai.functions";
 import { logMeal } from "@/lib/data.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChefHat, Sparkles, Loader2, Clock, Users, Camera, X } from "lucide-react";
 import { motion } from "framer-motion";
+import { LiveCamera } from "@/components/live-camera";
 
 export const Route = createFileRoute("/_authenticated/recipes")({
   component: RecipesPage,
@@ -20,13 +21,10 @@ async function fetchRecipes() {
   return data ?? [];
 }
 
-function fileToDataUrl(f: File): Promise<string> {
-  return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result as string); r.onerror = rej; r.readAsDataURL(f); });
-}
-
 function RecipesPage() {
   const { t } = useTranslation();
   const qc = useQueryClient();
+  const nav = useNavigate();
   const search = useSearch({ from: "/_authenticated/recipes" });
   const { data: recipes = [] } = useQuery({ queryKey: ["recipes"], queryFn: fetchRecipes });
   const gen = useServerFn(generateRecipe);
@@ -36,25 +34,20 @@ function RecipesPage() {
   const [manual, setManual] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState<any>(null);
-  const camRef = useRef<HTMLInputElement>(null);
-  const galRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (search.scan === "1") camRef.current?.click();
-  }, [search.scan]);
+  const showCamera = search.scan === "1";
 
   const detectMut = useMutation({
     mutationFn: (url: string) => detect({ data: { imageDataUrl: url } }),
-    onSuccess: (r: any) => setIngredients((prev) => Array.from(new Set([...prev, ...(r?.ingredients ?? [])]))),
-    onError: () => setError(t("recipes.scanError", { defaultValue: "Could not detect ingredients" }) as string),
+    onSuccess: (r: any) => {
+      setIngredients((prev) => Array.from(new Set([...prev, ...(r?.ingredients ?? [])])));
+      nav({ to: "/recipes", search: {} });
+    },
+    onError: (e: any) => {
+      setError(e?.message || (t("recipes.scanError", { defaultValue: "Could not detect ingredients" }) as string));
+      nav({ to: "/recipes", search: {} });
+    },
   });
 
-  async function onFile(f: File | undefined) {
-    if (!f) return;
-    setError(null);
-    const url = await fileToDataUrl(f);
-    detectMut.mutate(url);
-  }
 
   const genMut = useMutation({
     mutationFn: () => gen({ data: { ingredients: ingredients.join(", ") } }),
@@ -72,6 +65,16 @@ function RecipesPage() {
 
   return (
     <div className="min-h-screen">
+      {showCamera && (
+        <LiveCamera
+          label={t("recipes.scanFridge", { defaultValue: "Scan ingredients" }) as string}
+          onCapture={(url) => detectMut.mutate(url)}
+          onClose={() => nav({ to: "/recipes", search: {} })}
+          busy={detectMut.isPending}
+          busyLabel={t("common.generating") as string}
+        />
+      )}
+
       <div className="mx-auto max-w-md px-5 pt-14">
         <div className="flex items-center justify-between">
           <h1 className="font-display text-3xl font-bold tracking-tight">{t("recipes.title")}</h1>
@@ -79,16 +82,13 @@ function RecipesPage() {
         </div>
         <p className="mt-1 text-sm text-muted-foreground">{t("recipes.subtitle")}</p>
 
-        <input ref={camRef} type="file" accept="image/*" capture="environment" hidden onChange={(e) => onFile(e.target.files?.[0])} />
-        <input ref={galRef} type="file" accept="image/*" hidden onChange={(e) => onFile(e.target.files?.[0])} />
-
         <div className="glass-strong mt-5 rounded-[24px] p-4">
           <div className="mb-3 flex gap-2">
-            <button onClick={() => camRef.current?.click()} disabled={detectMut.isPending} className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white/8 py-2.5 text-xs font-semibold disabled:opacity-60">
+            <button onClick={() => nav({ to: "/recipes", search: { scan: "1" } })} disabled={detectMut.isPending} className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white/8 py-2.5 text-xs font-semibold disabled:opacity-60">
               {detectMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />} {t("recipes.scanFridge", { defaultValue: "Scan fridge/pantry" })}
             </button>
-            <button onClick={() => galRef.current?.click()} className="rounded-2xl bg-white/8 px-4 py-2.5 text-xs font-semibold">📁</button>
           </div>
+
 
           <div className="mb-2 flex flex-wrap gap-1.5">
             {ingredients.map((ing, i) => (
