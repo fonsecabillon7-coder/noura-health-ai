@@ -128,7 +128,7 @@ export const generateRecipe = createServerFn({ method: "POST" })
     const lang = await getUserLanguage(context.supabase, context.userId);
 
     const gateway = createLovableAiGatewayProvider(key);
-    const model = gateway("google/gemini-3-flash-preview");
+    const model = gateway("google/gemini-2.5-flash");
 
     const prompt = `You are a creative chef. Create ONE healthy recipe using these ingredients: ${data.ingredients}.
 ${data.diet ? `Diet: ${data.diet}.` : ""}
