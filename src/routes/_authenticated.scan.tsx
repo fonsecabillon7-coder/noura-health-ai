@@ -6,8 +6,27 @@ import { useTranslation } from "react-i18next";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { analyzeFoodImage } from "@/lib/ai.functions";
-import { logMeal } from "@/lib/data.functions";
+import { logMeal, saveScan, markScanLogged } from "@/lib/data.functions";
 import { LiveCamera } from "@/components/live-camera";
+
+// Downscale the capture so the stored history thumbnail stays small.
+function shrink(dataUrl: string, max = 640): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * scale);
+      c.height = Math.round(img.height * scale);
+      const ctx = c.getContext("2d");
+      if (!ctx) return resolve(dataUrl);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      resolve(c.toDataURL("image/jpeg", 0.6));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
 
 export const Route = createFileRoute("/_authenticated/scan")({
   component: Scan,
@@ -21,6 +40,7 @@ function Scan() {
   const nav = useNavigate();
   const [preview, setPreview] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
+  const [scanId, setScanId] = useState<string | null>(null);
   const [servings, setServings] = useState(1);
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [newIng, setNewIng] = useState("");
@@ -29,20 +49,53 @@ function Scan() {
 
   const analyze = useServerFn(analyzeFoodImage);
   const save = useServerFn(logMeal);
+  const storeScan = useServerFn(saveScan);
+  const flagLogged = useServerFn(markScanLogged);
 
   const analyzing = useMutation({
-    mutationFn: (dataUrl: string) => analyze({ data: { imageDataUrl: dataUrl } }),
-    onSuccess: (r: any) => {
+    mutationFn: async (dataUrl: string) => {
+      const r: any = await analyze({ data: { imageDataUrl: dataUrl } });
+      let thumb: string | undefined;
+      try {
+        thumb = await shrink(dataUrl);
+      } catch {
+        thumb = undefined;
+      }
+      let saved: any = null;
+      try {
+        saved = await storeScan({
+          data: {
+            name: r?.name ?? "Scan",
+            portion: r?.portion ?? undefined,
+            kcal: Number(r?.kcal ?? 0),
+            protein: Number(r?.protein ?? 0),
+            carbs: Number(r?.carbs ?? 0),
+            fat: Number(r?.fat ?? 0),
+            fiber: Number(r?.fiber ?? 0),
+            confidence: r?.confidence != null ? Number(r.confidence) : undefined,
+            ingredients: Array.isArray(r?.ingredients) ? r.ingredients : [],
+            image_url: thumb,
+            logged: false,
+          },
+        });
+      } catch (e) {
+        console.error("Could not save scan history", e);
+      }
+      return { r, saved };
+    },
+    onSuccess: ({ r, saved }: any) => {
       setResult(r);
+      setScanId(saved?.id ?? null);
       setServings(1);
       setIngredients(r?.ingredients ?? []);
+      qc.invalidateQueries({ queryKey: ["scans"] });
     },
     onError: (e: any) => setErr(e?.message || (t("scan.error") as string)),
   });
 
   const saveMut = useMutation({
-    mutationFn: () =>
-      save({
+    mutationFn: async () => {
+      await save({
         data: {
           name: result.name,
           kcal: (result.kcal ?? 0) * servings,
@@ -53,10 +106,19 @@ function Scan() {
           source: "scan",
           image_url: preview ?? undefined,
         },
-      }),
+      });
+      if (scanId) {
+        try {
+          await flagLogged({ data: { scanId } });
+        } catch {
+          /* history flag is best-effort */
+        }
+      }
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["dashboard"] });
       qc.invalidateQueries({ queryKey: ["meals"] });
+      qc.invalidateQueries({ queryKey: ["scans"] });
       nav({ to: "/dashboard" });
     },
   });

@@ -333,3 +333,48 @@ export const getDashboard = createServerFn({ method: "GET" })
       recentMeals: recentMeals ?? [],
     };
   });
+
+// ============ Scan history ============
+export const saveScan = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({
+      name: z.string(),
+      portion: z.string().optional(),
+      kcal: z.number(),
+      protein: z.number(),
+      carbs: z.number(),
+      fat: z.number(),
+      fiber: z.number().default(0),
+      confidence: z.number().optional(),
+      ingredients: z.array(z.string()).default([]),
+      image_url: z.string().optional(),
+      logged: z.boolean().default(false),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await context.supabase
+      .from("scans").insert({ ...data, user_id: context.userId }).select("*").single();
+    if (error) throw error;
+    return row;
+  });
+
+export const markScanLogged = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ scanId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await context.supabase.from("scans").update({ logged: true })
+      .eq("id", data.scanId).eq("user_id", context.userId);
+    return { ok: true };
+  });
+
+export const listScans = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data } = await context.supabase
+      .from("scans").select("*")
+      .eq("user_id", context.userId)
+      .order("scanned_at", { ascending: false })
+      .limit(100);
+    return data ?? [];
+  });

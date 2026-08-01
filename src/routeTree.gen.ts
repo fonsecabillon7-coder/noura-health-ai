@@ -16,6 +16,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedShoppingRouteImport } from './routes/_authenticated.shopping'
+import { Route as AuthenticatedScansRouteImport } from './routes/_authenticated.scans'
 import { Route as AuthenticatedScanRouteImport } from './routes/_authenticated.scan'
 import { Route as AuthenticatedRecipesRouteImport } from './routes/_authenticated.recipes'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated.profile'
@@ -58,6 +59,11 @@ const IndexRoute = IndexRouteImport.update({
 const AuthenticatedShoppingRoute = AuthenticatedShoppingRouteImport.update({
   id: '/shopping',
   path: '/shopping',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedScansRoute = AuthenticatedScansRouteImport.update({
+  id: '/scans',
+  path: '/scans',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedScanRoute = AuthenticatedScanRouteImport.update({
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/recipes': typeof AuthenticatedRecipesRoute
   '/scan': typeof AuthenticatedScanRoute
+  '/scans': typeof AuthenticatedScansRoute
   '/shopping': typeof AuthenticatedShoppingRoute
   '/focos/history': typeof AuthenticatedFocosHistoryRoute
 }
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/recipes': typeof AuthenticatedRecipesRoute
   '/scan': typeof AuthenticatedScanRoute
+  '/scans': typeof AuthenticatedScansRoute
   '/shopping': typeof AuthenticatedShoppingRoute
   '/focos/history': typeof AuthenticatedFocosHistoryRoute
 }
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/recipes': typeof AuthenticatedRecipesRoute
   '/_authenticated/scan': typeof AuthenticatedScanRoute
+  '/_authenticated/scans': typeof AuthenticatedScansRoute
   '/_authenticated/shopping': typeof AuthenticatedShoppingRoute
   '/_authenticated/focos/history': typeof AuthenticatedFocosHistoryRoute
 }
@@ -176,6 +185,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/recipes'
     | '/scan'
+    | '/scans'
     | '/shopping'
     | '/focos/history'
   fileRoutesByTo: FileRoutesByTo
@@ -193,6 +203,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/recipes'
     | '/scan'
+    | '/scans'
     | '/shopping'
     | '/focos/history'
   id:
@@ -211,6 +222,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/recipes'
     | '/_authenticated/scan'
+    | '/_authenticated/scans'
     | '/_authenticated/shopping'
     | '/_authenticated/focos/history'
   fileRoutesById: FileRoutesById
@@ -273,6 +285,13 @@ declare module '@tanstack/react-router' {
       path: '/shopping'
       fullPath: '/shopping'
       preLoaderRoute: typeof AuthenticatedShoppingRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/scans': {
+      id: '/_authenticated/scans'
+      path: '/scans'
+      fullPath: '/scans'
+      preLoaderRoute: typeof AuthenticatedScansRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/scan': {
@@ -361,6 +380,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRecipesRoute: typeof AuthenticatedRecipesRoute
   AuthenticatedScanRoute: typeof AuthenticatedScanRoute
+  AuthenticatedScansRoute: typeof AuthenticatedScansRoute
   AuthenticatedShoppingRoute: typeof AuthenticatedShoppingRoute
 }
 
@@ -373,6 +393,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRecipesRoute: AuthenticatedRecipesRoute,
   AuthenticatedScanRoute: AuthenticatedScanRoute,
+  AuthenticatedScansRoute: AuthenticatedScansRoute,
   AuthenticatedShoppingRoute: AuthenticatedShoppingRoute,
 }
 
@@ -391,13 +412,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

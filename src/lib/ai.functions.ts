@@ -116,7 +116,7 @@ export const detectIngredients = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
     const lang = await getUserLanguage(context.supabase, context.userId);
-    const prompt = `You are Noura AI's food-vision engine. Identify every distinct edible ingredient visible in this camera photo, even if the image is blurry, dark, partial, or handheld. Do not refuse. If uncertain, make the best visual estimate.
+    const prompt = `You are Neura AI's food-vision engine. Identify every distinct edible ingredient visible in this camera photo, even if the image is blurry, dark, partial, or handheld. Do not refuse. If uncertain, make the best visual estimate.
 
 Return ONLY valid JSON in this exact shape:
 {"ingredients":["ingredient name"]}
@@ -150,7 +150,7 @@ export const analyzeFoodImage = createServerFn({ method: "POST" })
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
     const lang = await getUserLanguage(context.supabase, context.userId);
 
-    const prompt = `You are Noura AI's nutrition-vision engine. Analyze this food camera photo and estimate nutrition for the single serving visible in the frame. The photo may be blurry, dark, angled, partially cropped, or handheld. Do not refuse and do not say you cannot analyze it. Make the best realistic estimate from visible food.
+    const prompt = `You are Neura AI's nutrition-vision engine. Analyze this food camera photo and estimate nutrition for the single serving visible in the frame. The photo may be blurry, dark, angled, partially cropped, or handheld. Do not refuse and do not say you cannot analyze it. Make the best realistic estimate from visible food.
 
 Return ONLY valid JSON in this exact shape:
 {"name":"dish name","kcal":450,"protein":25,"carbs":45,"fat":18,"fiber":4,"portion":"1 plate / visible serving","confidence":0.72,"ingredients":["ingredient"]}
@@ -219,7 +219,7 @@ export const generateRecipe = createServerFn({ method: "POST" })
     const gateway = createLovableAiGatewayProvider(key);
     const model = gateway(AI_MODEL);
 
-    const prompt = `You are Noura AI's premium nutrition chef. Create ONE healthy, practical recipe using these ingredients: ${data.ingredients}.
+    const prompt = `You are Neura AI's premium nutrition chef. Create ONE healthy, practical recipe using these ingredients: ${data.ingredients}.
 ${data.diet ? `Diet: ${data.diet}.` : ""}
 ${data.maxMinutes ? `Max prep time: ${data.maxMinutes} minutes.` : ""}
 Respond in ${langLabel(lang)}.

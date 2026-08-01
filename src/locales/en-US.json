@@ -30,7 +30,7 @@
     "footer": "Personalized in under 60 seconds"
   },
   "auth": {
-    "welcome": "Welcome to Noura",
+    "welcome": "Welcome to Neura",
     "signInSub": "Sign in to continue your journey.",
     "signUpSub": "Create your account to get started.",
     "orSignUp": "Don't have an account? Sign up",
@@ -131,5 +131,13 @@
     "dailyGoals": "Daily goals",
     "kcalGoal": "Calorie goal",
     "waterGoal": "Water goal (ml)"
+  },
+  "scans": {
+    "title": "Scan history",
+    "sub": "Every analysis, saved for later",
+    "emptyTitle": "No scans yet",
+    "emptySub": "Scan a meal and it will show up here.",
+    "scanNow": "Scan food",
+    "logged": "Added to your meal log"
   }
 }

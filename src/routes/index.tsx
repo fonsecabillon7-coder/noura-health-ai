@@ -9,7 +9,7 @@ export const Route = createFileRoute("/")({
   component: Welcome,
   head: () => ({
     meta: [
-      { title: "Noura AI — Eat Smarter. Live Better." },
+      { title: "Neura AI — Eat Smarter. Live Better." },
       { name: "description", content: "AI nutrition assistant. Track meals, hydration, and generate recipes from your fridge." },
     ],
   }),
@@ -53,7 +53,7 @@ function Welcome() {
             <div className="grid h-9 w-9 place-items-center rounded-2xl bg-gradient-to-br from-emerald to-emerald/60 shadow-emerald-glow">
               <Sparkles className="h-4 w-4 text-black" />
             </div>
-            <span className="text-lg font-semibold tracking-tight">Noura AI</span>
+            <span className="text-lg font-semibold tracking-tight">Neura AI</span>
           </div>
           <LangSwitcher />
         </div>
