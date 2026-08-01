@@ -73,7 +73,7 @@ function Auth() {
       <div className="relative z-10 mx-auto flex min-h-screen max-w-md flex-col px-6 pt-14 pb-10">
         <div className="flex items-center gap-2">
           <div className="grid h-9 w-9 place-items-center rounded-2xl bg-gradient-to-br from-emerald to-emerald/60"><Sparkles className="h-4 w-4 text-black" /></div>
-          <span className="text-lg font-semibold tracking-tight">Noura AI</span>
+          <span className="text-lg font-semibold tracking-tight">Neura AI</span>
         </div>
         <div className="mt-14">
           <h1 className="font-display text-3xl font-bold tracking-tight">{t("auth.welcome")}</h1>

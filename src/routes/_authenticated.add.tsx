@@ -28,7 +28,7 @@ function AddHub() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 text-xs text-emerald">
-              <Sparkles className="h-3 w-3" /> Noura AI
+              <Sparkles className="h-3 w-3" /> Neura AI
             </div>
             <h2 className="mt-1 font-display text-2xl font-bold">
               {t("add.title", { defaultValue: "What do you want to do?" })}

@@ -41,7 +41,7 @@ function Profile() {
               <div className="flex items-center gap-4">
                 <div className="grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-emerald to-hydration font-display text-2xl font-bold text-black">{(name[0] || "N").toUpperCase()}</div>
                 <div>
-                  <div className="font-display text-xl font-bold">{name || "Noura"}</div>
+                  <div className="font-display text-xl font-bold">{name || "Neura"}</div>
                   <div className="text-xs text-muted-foreground">{profile?.goal || ""}</div>
                 </div>
               </div>
