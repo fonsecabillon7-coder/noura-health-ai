@@ -40,7 +40,7 @@ function Auth() {
           name: name || undefined,
           language: i18n.resolvedLanguage || "en-US",
           goal: onb.goal,
-          activity: onb.activity,
+          activity_level: onb.activity,
           age: onb.age,
           height_cm: onb.heightCm,
           weight_kg: onb.weightKg,
@@ -51,7 +51,7 @@ function Auth() {
           cook_time: onb.cookTime,
           motivation: onb.motivation,
           water_goal_ml: onb.water ? Math.round(onb.water * 250) : undefined,
-          onboarded: true,
+          onboarding_completed: true,
         }).eq("user_id", data.user!.id);
         nav({ to: "/dashboard" });
       } else {
