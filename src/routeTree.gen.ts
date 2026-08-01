@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as ProcessingRouteImport } from './routes/processing'
+import { Route as LocaleRouteImport } from './routes/locale'
 import { Route as IntroRouteImport } from './routes/intro'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -35,6 +36,11 @@ const QuizRoute = QuizRouteImport.update({
 const ProcessingRoute = ProcessingRouteImport.update({
   id: '/processing',
   path: '/processing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocaleRoute = LocaleRouteImport.update({
+  id: '/locale',
+  path: '/locale',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IntroRoute = IntroRouteImport.update({
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/intro': typeof IntroRoute
+  '/locale': typeof LocaleRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/add': typeof AuthenticatedAddRoute
@@ -135,6 +142,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/intro': typeof IntroRoute
+  '/locale': typeof LocaleRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/add': typeof AuthenticatedAddRoute
@@ -155,6 +163,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
   '/intro': typeof IntroRoute
+  '/locale': typeof LocaleRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/_authenticated/add': typeof AuthenticatedAddRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/intro'
+    | '/locale'
     | '/processing'
     | '/quiz'
     | '/add'
@@ -193,6 +203,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/intro'
+    | '/locale'
     | '/processing'
     | '/quiz'
     | '/add'
@@ -212,6 +223,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/intro'
+    | '/locale'
     | '/processing'
     | '/quiz'
     | '/_authenticated/add'
@@ -232,6 +244,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
   IntroRoute: typeof IntroRoute
+  LocaleRoute: typeof LocaleRoute
   ProcessingRoute: typeof ProcessingRoute
   QuizRoute: typeof QuizRoute
 }
@@ -250,6 +263,13 @@ declare module '@tanstack/react-router' {
       path: '/processing'
       fullPath: '/processing'
       preLoaderRoute: typeof ProcessingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/locale': {
+      id: '/locale'
+      path: '/locale'
+      fullPath: '/locale'
+      preLoaderRoute: typeof LocaleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/intro': {
@@ -406,6 +426,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
   IntroRoute: IntroRoute,
+  LocaleRoute: LocaleRoute,
   ProcessingRoute: ProcessingRoute,
   QuizRoute: QuizRoute,
 }
