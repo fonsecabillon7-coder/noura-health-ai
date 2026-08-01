@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as ProcessingRouteImport } from './routes/processing'
+import { Route as PlanRouteImport } from './routes/plan'
 import { Route as LocaleRouteImport } from './routes/locale'
 import { Route as IntroRouteImport } from './routes/intro'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -36,6 +37,11 @@ const QuizRoute = QuizRouteImport.update({
 const ProcessingRoute = ProcessingRouteImport.update({
   id: '/processing',
   path: '/processing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanRoute = PlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LocaleRoute = LocaleRouteImport.update({
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/intro': typeof IntroRoute
   '/locale': typeof LocaleRoute
+  '/plan': typeof PlanRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/add': typeof AuthenticatedAddRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/intro': typeof IntroRoute
   '/locale': typeof LocaleRoute
+  '/plan': typeof PlanRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/add': typeof AuthenticatedAddRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/intro': typeof IntroRoute
   '/locale': typeof LocaleRoute
+  '/plan': typeof PlanRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/_authenticated/add': typeof AuthenticatedAddRoute
@@ -185,6 +194,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/intro'
     | '/locale'
+    | '/plan'
     | '/processing'
     | '/quiz'
     | '/add'
@@ -204,6 +214,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/intro'
     | '/locale'
+    | '/plan'
     | '/processing'
     | '/quiz'
     | '/add'
@@ -224,6 +235,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/intro'
     | '/locale'
+    | '/plan'
     | '/processing'
     | '/quiz'
     | '/_authenticated/add'
@@ -245,6 +257,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   IntroRoute: typeof IntroRoute
   LocaleRoute: typeof LocaleRoute
+  PlanRoute: typeof PlanRoute
   ProcessingRoute: typeof ProcessingRoute
   QuizRoute: typeof QuizRoute
 }
@@ -263,6 +276,13 @@ declare module '@tanstack/react-router' {
       path: '/processing'
       fullPath: '/processing'
       preLoaderRoute: typeof ProcessingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plan': {
+      id: '/plan'
+      path: '/plan'
+      fullPath: '/plan'
+      preLoaderRoute: typeof PlanRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/locale': {
@@ -427,6 +447,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   IntroRoute: IntroRoute,
   LocaleRoute: LocaleRoute,
+  PlanRoute: PlanRoute,
   ProcessingRoute: ProcessingRoute,
   QuizRoute: QuizRoute,
 }
