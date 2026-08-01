@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as ProcessingRouteImport } from './routes/processing'
 import { Route as PlanRouteImport } from './routes/plan'
+import { Route as PaywallRouteImport } from './routes/paywall'
 import { Route as LocaleRouteImport } from './routes/locale'
 import { Route as IntroRouteImport } from './routes/intro'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -42,6 +43,11 @@ const ProcessingRoute = ProcessingRouteImport.update({
 const PlanRoute = PlanRouteImport.update({
   id: '/plan',
   path: '/plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaywallRoute = PaywallRouteImport.update({
+  id: '/paywall',
+  path: '/paywall',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LocaleRoute = LocaleRouteImport.update({
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/intro': typeof IntroRoute
   '/locale': typeof LocaleRoute
+  '/paywall': typeof PaywallRoute
   '/plan': typeof PlanRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/intro': typeof IntroRoute
   '/locale': typeof LocaleRoute
+  '/paywall': typeof PaywallRoute
   '/plan': typeof PlanRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/intro': typeof IntroRoute
   '/locale': typeof LocaleRoute
+  '/paywall': typeof PaywallRoute
   '/plan': typeof PlanRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/intro'
     | '/locale'
+    | '/paywall'
     | '/plan'
     | '/processing'
     | '/quiz'
@@ -214,6 +224,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/intro'
     | '/locale'
+    | '/paywall'
     | '/plan'
     | '/processing'
     | '/quiz'
@@ -235,6 +246,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/intro'
     | '/locale'
+    | '/paywall'
     | '/plan'
     | '/processing'
     | '/quiz'
@@ -257,6 +269,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   IntroRoute: typeof IntroRoute
   LocaleRoute: typeof LocaleRoute
+  PaywallRoute: typeof PaywallRoute
   PlanRoute: typeof PlanRoute
   ProcessingRoute: typeof ProcessingRoute
   QuizRoute: typeof QuizRoute
@@ -283,6 +296,13 @@ declare module '@tanstack/react-router' {
       path: '/plan'
       fullPath: '/plan'
       preLoaderRoute: typeof PlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paywall': {
+      id: '/paywall'
+      path: '/paywall'
+      fullPath: '/paywall'
+      preLoaderRoute: typeof PaywallRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/locale': {
@@ -447,6 +467,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   IntroRoute: IntroRoute,
   LocaleRoute: LocaleRoute,
+  PaywallRoute: PaywallRoute,
   PlanRoute: PlanRoute,
   ProcessingRoute: ProcessingRoute,
   QuizRoute: QuizRoute,
