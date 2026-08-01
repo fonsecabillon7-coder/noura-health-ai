@@ -89,7 +89,18 @@ function Profile() {
           </div>
         </div>
 
-        <button onClick={signOut} className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 py-4 text-sm">
+        <Link
+          to="/scans"
+          className="glass mt-6 flex w-full items-center justify-between rounded-2xl px-4 py-4 text-sm font-medium"
+        >
+          <span className="flex items-center gap-2">
+            <History className="h-4 w-4 text-emerald" />
+            {t("scans.title", { defaultValue: "Scan history" })}
+          </span>
+          <span className="text-muted-foreground">›</span>
+        </Link>
+
+        <button onClick={signOut} className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 py-4 text-sm">
           <LogOut className="h-4 w-4" /> {t("common.signOut")}
         </button>
       </div>
