@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Camera, ChefHat, X, Sparkles } from "lucide-react";
+import { Camera, ChefHat, X, Sparkles, History as HistoryIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/_authenticated/add")({ component: AddHub });
@@ -82,7 +82,7 @@ function AddHub() {
             className="glass-strong flex items-center gap-4 rounded-[28px] p-5 text-left"
           >
             <div className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-sky-300 to-blue-600">
-              <History className="h-6 w-6 text-black" />
+              <HistoryIcon className="h-6 w-6 text-black" />
             </div>
             <div className="flex-1">
               <div className="font-display text-lg font-bold">
