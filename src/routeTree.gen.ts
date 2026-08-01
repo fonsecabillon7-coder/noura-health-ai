@@ -14,7 +14,6 @@ import { Route as ProcessingRouteImport } from './routes/processing'
 import { Route as PlanRouteImport } from './routes/plan'
 import { Route as PaywallRouteImport } from './routes/paywall'
 import { Route as LocaleRouteImport } from './routes/locale'
-import { Route as IntroRouteImport } from './routes/intro'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -53,11 +52,6 @@ const PaywallRoute = PaywallRouteImport.update({
 const LocaleRoute = LocaleRouteImport.update({
   id: '/locale',
   path: '/locale',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IntroRoute = IntroRouteImport.update({
-  id: '/intro',
-  path: '/intro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -134,7 +128,6 @@ const AuthenticatedFocosHistoryRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/intro': typeof IntroRoute
   '/locale': typeof LocaleRoute
   '/paywall': typeof PaywallRoute
   '/plan': typeof PlanRoute
@@ -155,7 +148,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/intro': typeof IntroRoute
   '/locale': typeof LocaleRoute
   '/paywall': typeof PaywallRoute
   '/plan': typeof PlanRoute
@@ -178,7 +170,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
-  '/intro': typeof IntroRoute
   '/locale': typeof LocaleRoute
   '/paywall': typeof PaywallRoute
   '/plan': typeof PlanRoute
@@ -201,7 +192,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/intro'
     | '/locale'
     | '/paywall'
     | '/plan'
@@ -222,7 +212,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
-    | '/intro'
     | '/locale'
     | '/paywall'
     | '/plan'
@@ -244,7 +233,6 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/intro'
     | '/locale'
     | '/paywall'
     | '/plan'
@@ -267,7 +255,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
-  IntroRoute: typeof IntroRoute
   LocaleRoute: typeof LocaleRoute
   PaywallRoute: typeof PaywallRoute
   PlanRoute: typeof PlanRoute
@@ -310,13 +297,6 @@ declare module '@tanstack/react-router' {
       path: '/locale'
       fullPath: '/locale'
       preLoaderRoute: typeof LocaleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/intro': {
-      id: '/intro'
-      path: '/intro'
-      fullPath: '/intro'
-      preLoaderRoute: typeof IntroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -465,7 +445,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
-  IntroRoute: IntroRoute,
   LocaleRoute: LocaleRoute,
   PaywallRoute: PaywallRoute,
   PlanRoute: PlanRoute,
