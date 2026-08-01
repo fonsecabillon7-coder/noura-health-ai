@@ -1,354 +1,669 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { motion, AnimatePresence } from "framer-motion";
-import { useMemo, useState } from "react";
-import {
-  TrendingDown, TrendingUp, Minus, Salad, Sparkles,
-  Armchair, Footprints, Bike, Dumbbell, Trophy,
-  Check, ChevronLeft, Droplets,
-} from "lucide-react";
-import { patchOnboarding } from "@/lib/noura";
-import { LangSwitcher } from "@/components/lang-switcher";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { ArrowLeft, ArrowRight, Check, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { loadOnboarding, patchOnboarding, type OnboardingData } from "@/lib/noura";
 
-export const Route = createFileRoute("/quiz")({ component: Quiz });
-
-const goals = [
-  { id: "lose", label: "Lose Weight", desc: "Cut fat sustainably", Icon: TrendingDown },
-  { id: "gain", label: "Gain Muscle", desc: "Build lean strength", Icon: TrendingUp },
-  { id: "maintain", label: "Maintain Weight", desc: "Stay right where you are", Icon: Minus },
-  { id: "healthier", label: "Eat Healthier", desc: "Better food, better mood", Icon: Salad },
-  { id: "habits", label: "Build Better Habits", desc: "Consistency compounds", Icon: Sparkles },
-];
-
-const activities = [
-  { id: "sedentary", label: "Mostly sedentary", desc: "Desk work, little movement", Icon: Armchair },
-  { id: "light", label: "Lightly active", desc: "1–2 workouts / week", Icon: Footprints },
-  { id: "moderate", label: "Moderately active", desc: "3–4 workouts / week", Icon: Bike },
-  { id: "very", label: "Very active", desc: "5–6 workouts / week", Icon: Dumbbell },
-  { id: "athlete", label: "Athlete", desc: "Daily training", Icon: Trophy },
-];
-
-const diets = ["No preference","Vegetarian","Vegan","Keto","Mediterranean","High Protein","Low Carb","Gluten Free","Dairy Free"];
-const allergens = ["Peanuts","Eggs","Milk","Soy","Seafood","Tree Nuts","Wheat","Sesame"];
-const equipment = ["Air Fryer","Oven","Stove Top","Microwave","Blender","Pressure Cooker","Rice Cooker","Grill","Slow Cooker"];
-const cookTimes = ["Under 10 minutes","10–20 minutes","20–40 minutes","40–60 minutes","No preference"];
-const motivations = ["Feel healthier","Have more energy","Improve confidence","Athletic performance","Medical recommendation","Build consistent habits"];
+export const Route = createFileRoute("/quiz")({
+  component: Quiz,
+  head: () => ({
+    meta: [
+      { title: "Build your plan — Neura AI" },
+      { name: "description", content: "Answer 12 quick questions and Neura AI builds your nutrition, hydration and habit plan." },
+      { property: "og:title", content: "Build your plan — Neura AI" },
+      { property: "og:description", content: "Answer 12 quick questions and Neura AI builds your nutrition, hydration and habit plan." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+});
 
 const TOTAL = 12;
 
+function haptic() {
+  if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate?.(8);
+}
+
 function Quiz() {
-  const [step, setStep] = useState(0);
-  const [data, setData] = useState<Record<string, any>>({});
+  const { t } = useTranslation();
   const nav = useNavigate();
+  const [step, setStep] = useState(1);
+  const [dir, setDir] = useState(1);
+  const [d, setD] = useState<OnboardingData>({});
 
-  const set = (k: string, v: any) => setData((d) => ({ ...d, [k]: v }));
-  const toggle = (k: string, v: string) =>
-    setData((d) => {
-      const arr: string[] = d[k] || [];
-      return { ...d, [k]: arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v] };
+  useEffect(() => {
+    setD(loadOnboarding());
+  }, []);
+
+  function set(patch: Partial<OnboardingData>) {
+    setD((prev) => {
+      const next = { ...prev, ...patch };
+      patchOnboarding(patch);
+      return next;
     });
+  }
 
-  const canNext = useMemo(() => {
-    switch (step) {
-      case 0: return !!data.goal;
-      case 1: return !!data.activity;
-      case 2: return !!data.age;
-      case 3: return !!data.heightCm;
-      case 4: return !!data.weightKg;
-      case 5: return data.goal === "maintain" || data.goal === "healthier" || data.goal === "habits" || !!data.targetWeightKg;
-      case 6: return (data.diets || []).length > 0;
-      case 7: return true;
-      case 8: return (data.equipment || []).length > 0;
-      case 9: return !!data.cookTime;
-      case 10: return !!data.water;
-      case 11: return !!data.motivation;
-      default: return true;
+  function next() {
+    haptic();
+    if (step === TOTAL) {
+      nav({ to: "/processing" });
+      return;
     }
-  }, [step, data]);
+    setDir(1);
+    setStep((s) => s + 1);
+  }
 
-  const next = () => {
-    patchOnboarding(data);
-    if (step < TOTAL - 1) setStep(step + 1);
-    else nav({ to: "/processing" });
-  };
-  const back = () => (step === 0 ? nav({ to: "/intro" }) : setStep(step - 1));
+  function back() {
+    if (step === 1) {
+      nav({ to: "/locale" });
+      return;
+    }
+    setDir(-1);
+    setStep((s) => s - 1);
+  }
+
+  function pick(patch: Partial<OnboardingData>, auto = true) {
+    set(patch);
+    haptic();
+    if (auto) setTimeout(next, 240);
+  }
+
+  const canContinue = (() => {
+    switch (step) {
+      case 1:
+        return !!d.goal;
+      case 2:
+        return !!d.challenge;
+      case 3:
+        return !!d.age;
+      case 4:
+        return !!d.heightCm && !!d.weightKg;
+      case 5:
+        return !!d.activity;
+      case 6:
+        return !!d.bodyGoal;
+      case 7:
+        return !!d.nutritionStyle;
+      case 8:
+        return !!d.hydration;
+      case 11:
+        return !!d.cookTime;
+      default:
+        return true;
+    }
+  })();
 
   return (
-    <div className="relative min-h-screen">
-      <div className="absolute right-5 top-14 z-20"><LangSwitcher /></div>
-      <div className="mx-auto flex min-h-screen max-w-md flex-col px-6 pt-12 pb-8">
-        {/* Header */}
+    <div className="relative min-h-screen overflow-hidden">
+      <div className="pointer-events-none absolute inset-0">
+        <motion.div
+          animate={{ opacity: [0.35, 0.7, 0.35] }}
+          transition={{ duration: 8, repeat: Infinity }}
+          className="absolute -top-40 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-emerald/15 blur-[130px]"
+        />
+      </div>
+
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-md flex-col px-6 pb-8 pt-14">
+        {/* header */}
         <div className="flex items-center gap-3">
-          <button onClick={back} className="grid h-10 w-10 place-items-center rounded-full bg-white/5 active:bg-white/10">
-            <ChevronLeft className="h-5 w-5" />
+          <button onClick={back} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/8">
+            <ArrowLeft className="h-4 w-4" />
           </button>
-          <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/8">
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/8">
             <motion.div
-              animate={{ width: `${((step + 1) / TOTAL) * 100}%` }}
-              transition={{ type: "spring", damping: 20 }}
-              className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-emerald to-emerald/70"
+              className="h-full rounded-full bg-gradient-to-r from-emerald to-hydration"
+              animate={{ width: `${(step / TOTAL) * 100}%` }}
+              transition={{ type: "spring", stiffness: 120, damping: 20 }}
             />
           </div>
-          <div className="w-10 text-right text-xs text-muted-foreground">
-            {step + 1}/{TOTAL}
-          </div>
+          <span className="w-12 shrink-0 text-right text-[11px] tabular-nums text-muted-foreground">
+            {step}/{TOTAL}
+          </span>
         </div>
 
-        {/* Body */}
-        <div className="mt-8 flex-1">
-          <AnimatePresence mode="wait">
+        <div className="relative mt-8 flex-1">
+          <AnimatePresence mode="wait" custom={dir}>
             <motion.div
               key={step}
-              initial={{ opacity: 0, x: 30 }}
+              custom={dir}
+              initial={{ opacity: 0, x: dir * 40 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -30 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              exit={{ opacity: 0, x: dir * -40 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className="flex h-full flex-col"
             >
-              {step === 0 && <StepChoice title="What's your primary goal?" subtitle="We'll tailor everything around this." options={goals} value={data.goal} onSelect={(v) => set("goal", v)} />}
-              {step === 1 && <StepChoice title="How active are you day to day?" subtitle="Be honest — we adjust your calories automatically." options={activities} value={data.activity} onSelect={(v) => set("activity", v)} />}
-              {step === 2 && <WheelStep title="How old are you?" subtitle="Used to estimate your metabolic rate." min={13} max={90} defaultVal={28} unit="years" onChange={(v) => set("age", v)} />}
-              {step === 3 && <WheelStep title="How tall are you?" subtitle="Metric or Imperial — your call." min={140} max={220} defaultVal={172} unit="cm" onChange={(v) => set("heightCm", v)} />}
-              {step === 4 && <WeightStep title="What's your current weight?" heightCm={data.heightCm || 172} onChange={(v) => set("weightKg", v)} />}
-              {step === 5 && (
-                (data.goal === "maintain" || data.goal === "healthier" || data.goal === "habits")
-                  ? <SkipStep title="You're set." subtitle="Since you're not targeting a specific weight, we'll optimize for balance and long-term consistency." />
-                  : <TargetStep title="What's your target?" current={data.weightKg || 70} goal={data.goal as "lose" | "gain"} onChange={(v) => set("targetWeightKg", v)} />
-              )}
-              {step === 6 && <MultiStep title="Dietary preferences" subtitle="Pick anything that applies." options={diets} selected={data.diets || []} onToggle={(v) => toggle("diets", v)} />}
-              {step === 7 && <MultiStep title="Any allergies?" subtitle="We'll never suggest these." options={allergens} selected={data.allergies || []} onToggle={(v) => toggle("allergies", v)} allowEmpty />}
-              {step === 8 && <MultiStep title="What's in your kitchen?" subtitle="We tailor recipes to what you own." options={equipment} selected={data.equipment || []} onToggle={(v) => toggle("equipment", v)} />}
-              {step === 9 && <SingleStep title="How long do you like to cook?" options={cookTimes} value={data.cookTime} onSelect={(v) => set("cookTime", v)} />}
-              {step === 10 && <WaterStep title="Daily water intake" subtitle="A rough estimate is perfect." value={data.water || 6} onChange={(v) => set("water", v)} />}
-              {step === 11 && <SingleStep title="Why does this matter to you?" subtitle="We'll personalize your encouragement." options={motivations} value={data.motivation} onSelect={(v) => set("motivation", v)} />}
+              <Step step={step} d={d} set={set} pick={pick} />
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <motion.button
-          whileTap={{ scale: canNext ? 0.97 : 1 }}
-          disabled={!canNext}
+        <button
           onClick={next}
-          className={`mt-6 w-full rounded-[28px] py-5 text-[17px] font-semibold transition-all ${
-            canNext
-              ? "bg-white text-black shadow-premium"
-              : "bg-white/8 text-white/30"
-          }`}
+          disabled={!canContinue}
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-[24px] bg-white py-4 text-[15px] font-semibold text-black transition disabled:opacity-30"
         >
-          {step === TOTAL - 1 ? "Finish" : "Continue"}
-        </motion.button>
+          {step === TOTAL ? t("plan.cta", { defaultValue: t("ob.continue") }) : t("ob.continue")}
+          <ArrowRight className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );
 }
 
-/* ------ Step components ------ */
+/* ---------- shared bits ---------- */
 
-function StepHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+function Title({ title, sub }: { title: string; sub?: string }) {
   return (
     <div className="mb-6">
-      <h1 className="font-display text-[26px] font-bold leading-tight tracking-tight">{title}</h1>
-      {subtitle && <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>}
+      <h1 className="font-display text-[27px] font-bold leading-[1.15] tracking-tight">{title}</h1>
+      {sub && <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{sub}</p>}
     </div>
   );
 }
 
-interface OptWithIcon { id: string; label: string; desc: string; Icon: React.ComponentType<{ className?: string }> }
-function StepChoice({ title, subtitle, options, value, onSelect }: { title: string; subtitle?: string; options: OptWithIcon[]; value?: string; onSelect: (v: string) => void }) {
+function Option({
+  active,
+  onClick,
+  emoji,
+  label,
+  desc,
+}: {
+  active: boolean;
+  onClick: () => void;
+  emoji?: string;
+  label: string;
+  desc?: string;
+}) {
   return (
-    <div>
-      <StepHeader title={title} subtitle={subtitle} />
-      <div className="space-y-3">
-        {options.map((o) => {
-          const active = value === o.id;
-          return (
-            <motion.button
-              key={o.id}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => onSelect(o.id)}
-              className={`flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all ${
-                active
-                  ? "border-emerald/60 bg-emerald/10 shadow-emerald-glow"
-                  : "border-white/8 bg-white/[0.03] hover:bg-white/[0.06]"
-              }`}
-            >
-              <div className={`grid h-11 w-11 place-items-center rounded-xl ${active ? "bg-emerald text-black" : "bg-white/8 text-white"}`}>
-                <o.Icon className="h-5 w-5" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="font-semibold">{o.label}</div>
-                <div className="text-xs text-muted-foreground">{o.desc}</div>
-              </div>
-              {active && <Check className="h-5 w-5 text-emerald" />}
-            </motion.button>
-          );
-        })}
+    <motion.button
+      whileTap={{ scale: 0.975 }}
+      onClick={onClick}
+      className={`flex w-full items-center gap-3.5 rounded-[22px] border p-4 text-left transition ${
+        active ? "border-emerald/60 bg-emerald/10 shadow-emerald-glow" : "border-white/8 bg-white/[0.03]"
+      }`}
+    >
+      {emoji && <span className="text-2xl">{emoji}</span>}
+      <div className="flex-1">
+        <div className="text-[15px] font-semibold leading-tight">{label}</div>
+        {desc && <div className="mt-1 text-xs leading-snug text-muted-foreground">{desc}</div>}
       </div>
+      <div
+        className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border ${
+          active ? "border-emerald bg-emerald" : "border-white/20"
+        }`}
+      >
+        {active && <Check className="h-3.5 w-3.5 text-black" />}
+      </div>
+    </motion.button>
+  );
+}
+
+function Chips({
+  items,
+  selected,
+  onToggle,
+}: {
+  items: { key: string; label: string }[];
+  selected: string[];
+  onToggle: (k: string) => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {items.map((it) => {
+        const active = selected.includes(it.key);
+        return (
+          <motion.button
+            key={it.key}
+            whileTap={{ scale: 0.94 }}
+            onClick={() => onToggle(it.key)}
+            className={`rounded-full border px-4 py-2.5 text-[13px] font-medium transition ${
+              active ? "border-emerald/60 bg-emerald/15 text-emerald" : "border-white/10 bg-white/[0.03]"
+            }`}
+          >
+            {it.label}
+          </motion.button>
+        );
+      })}
     </div>
   );
 }
 
-function WheelStep({ title, subtitle, min, max, defaultVal, unit, onChange }: { title: string; subtitle?: string; min: number; max: number; defaultVal: number; unit: string; onChange: (v: number) => void }) {
-  const [val, setVal] = useState(defaultVal);
+function TagInput({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string[];
+  onChange: (v: string[]) => void;
+  placeholder: string;
+}) {
+  const [text, setText] = useState("");
+  function add() {
+    const v = text.trim();
+    if (!v) return;
+    onChange([...value, v]);
+    setText("");
+  }
   return (
     <div>
-      <StepHeader title={title} subtitle={subtitle} />
-      <div className="glass rounded-3xl p-8">
-        <div className="text-center">
-          <div className="font-display text-7xl font-bold tracking-tight">{val}</div>
-          <div className="mt-1 text-sm text-muted-foreground">{unit}</div>
-        </div>
+      <div className="glass flex items-center gap-2 rounded-2xl px-4 py-3">
         <input
-          type="range"
-          min={min}
-          max={max}
-          value={val}
-          onChange={(e) => { const v = +e.target.value; setVal(v); onChange(v); }}
-          className="mt-6 w-full accent-emerald"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              add();
+            }
+          }}
+          placeholder={placeholder}
+          className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
         />
-        <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-          <span>{min}</span><span>{max}</span>
-        </div>
+        <button onClick={add} className="text-xs font-semibold text-emerald">
+          +
+        </button>
       </div>
-    </div>
-  );
-}
-
-function WeightStep({ title, heightCm, onChange }: { title: string; heightCm: number; onChange: (v: number) => void }) {
-  const [val, setVal] = useState(72);
-  const bmi = (val / Math.pow(heightCm / 100, 2)).toFixed(1);
-  const bmiLabel = +bmi < 18.5 ? "Under" : +bmi < 25 ? "Healthy" : +bmi < 30 ? "Above" : "High";
-  const bmiColor = +bmi < 18.5 ? "text-hydration" : +bmi < 25 ? "text-emerald" : +bmi < 30 ? "text-calorie" : "text-destructive";
-  return (
-    <div>
-      <StepHeader title={title} />
-      <div className="glass rounded-3xl p-8">
-        <div className="text-center">
-          <div className="font-display text-7xl font-bold tracking-tight">{val}</div>
-          <div className="mt-1 text-sm text-muted-foreground">kg</div>
-        </div>
-        <input type="range" min={35} max={200} value={val} onChange={(e) => { const v = +e.target.value; setVal(v); onChange(v); }} className="mt-6 w-full accent-emerald" />
-        <div className="mt-4 flex items-center justify-center gap-2">
-          <span className="text-xs text-muted-foreground">Estimated BMI</span>
-          <span className={`text-sm font-semibold ${bmiColor}`}>{bmi} · {bmiLabel}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TargetStep({ title, current, goal, onChange }: { title: string; current: number; goal: "lose" | "gain"; onChange: (v: number) => void }) {
-  const initial = goal === "lose" ? Math.max(40, current - 6) : current + 6;
-  const [val, setVal] = useState(initial);
-  const diff = Math.abs(val - current);
-  const weeks = Math.ceil(diff / 0.5);
-  return (
-    <div>
-      <StepHeader title={title} subtitle={`You'll get there at a healthy, sustainable pace.`} />
-      <div className="glass rounded-3xl p-8">
-        <div className="text-center">
-          <div className="font-display text-7xl font-bold tracking-tight">{val}</div>
-          <div className="mt-1 text-sm text-muted-foreground">kg target</div>
-        </div>
-        <input type="range" min={35} max={200} value={val} onChange={(e) => { const v = +e.target.value; setVal(v); onChange(v); }} className="mt-6 w-full accent-emerald" />
-        <div className="mt-4 flex items-center justify-center gap-2 rounded-full bg-emerald/10 px-3 py-1.5 text-emerald">
-          <Sparkles className="h-3.5 w-3.5" />
-          <span className="text-xs font-medium">~{weeks} weeks at a healthy pace</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MultiStep({ title, subtitle, options, selected, onToggle, allowEmpty }: { title: string; subtitle?: string; options: string[]; selected: string[]; onToggle: (v: string) => void; allowEmpty?: boolean }) {
-  return (
-    <div>
-      <StepHeader title={title} subtitle={subtitle} />
-      <div className="flex flex-wrap gap-2">
-        {options.map((o) => {
-          const active = selected.includes(o);
-          return (
-            <motion.button
-              key={o}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => onToggle(o)}
-              className={`rounded-2xl border px-4 py-3 text-sm font-medium transition-all ${
-                active
-                  ? "border-emerald/60 bg-emerald/15 text-emerald"
-                  : "border-white/8 bg-white/[0.03] text-white/80"
-              }`}
+      {value.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {value.map((v, i) => (
+            <button
+              key={`${v}-${i}`}
+              onClick={() => onChange(value.filter((_, idx) => idx !== i))}
+              className="rounded-full bg-white/8 px-3 py-1.5 text-xs"
             >
-              {o}
-            </motion.button>
-          );
-        })}
-      </div>
-      {allowEmpty && selected.length === 0 && (
-        <p className="mt-4 text-xs text-muted-foreground">No allergies? You can skip this.</p>
+              {v} ✕
+            </button>
+          ))}
+        </div>
       )}
     </div>
   );
 }
 
-function SingleStep({ title, subtitle, options, value, onSelect }: { title: string; subtitle?: string; options: string[]; value?: string; onSelect: (v: string) => void }) {
-  return (
-    <div>
-      <StepHeader title={title} subtitle={subtitle} />
-      <div className="space-y-2.5">
-        {options.map((o) => {
-          const active = value === o;
-          return (
-            <motion.button
-              key={o}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => onSelect(o)}
-              className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left transition-all ${
-                active
-                  ? "border-emerald/60 bg-emerald/10"
-                  : "border-white/8 bg-white/[0.03]"
-              }`}
-            >
-              <span className="font-medium">{o}</span>
-              {active && <Check className="h-5 w-5 text-emerald" />}
-            </motion.button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+/* ---------- steps ---------- */
 
-function WaterStep({ title, subtitle, value, onChange }: { title: string; subtitle?: string; value: number; onChange: (v: number) => void }) {
-  return (
-    <div>
-      <StepHeader title={title} subtitle={subtitle} />
-      <div className="glass rounded-3xl p-8">
-        <div className="mx-auto grid h-52 w-28 place-items-end overflow-hidden rounded-[32px] border-2 border-hydration/40 bg-hydration/5">
-          <motion.div
-            animate={{ height: `${Math.min(100, (value / 12) * 100)}%` }}
-            transition={{ type: "spring", damping: 22 }}
-            className="w-full bg-gradient-to-t from-hydration to-hydration/60"
+function Step({
+  step,
+  d,
+  set,
+  pick,
+}: {
+  step: number;
+  d: OnboardingData;
+  set: (p: Partial<OnboardingData>) => void;
+  pick: (p: Partial<OnboardingData>) => void;
+}) {
+  const { t } = useTranslation();
+  const toggle = (arr: string[] | undefined, k: string) =>
+    (arr ?? []).includes(k) ? (arr ?? []).filter((x) => x !== k) : [...(arr ?? []), k];
+
+  if (step === 1) {
+    const opts = [
+      { k: "lose", e: "🔥" },
+      { k: "gain", e: "💪", i: "muscle" },
+      { k: "maintain", e: "⚖️" },
+      { k: "healthier", e: "🥗", i: "health" },
+      { k: "habits", e: "✨" },
+    ] as const;
+    return (
+      <div>
+        <Title title={t("ob.q1.title")} sub={t("ob.q1.sub")} />
+        <div className="space-y-2.5">
+          {opts.map((o) => {
+            const i = (o as any).i ?? o.k;
+            return (
+              <Option
+                key={o.k}
+                emoji={o.e}
+                active={d.goal === o.k}
+                label={t(`ob.q1.${i}`)}
+                desc={t(`ob.q1.${i}_d`)}
+                onClick={() => pick({ goal: o.k as any })}
+              />
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  if (step === 2) {
+    const opts = [
+      { k: "a", e: "🤔", label: t("ob.q2.a"), sol: t("ob.q2.a_s") },
+      { k: "b", e: "📉", label: t("ob.q2.b"), sol: t("ob.q2.b_s") },
+      { k: "c", e: "🔍", label: t("ob.q2.c"), sol: t("ob.q2.c_s") },
+      { k: "d", e: "💧", label: t("ob.q2_d"), sol: t("ob.q2.d_s") },
+      { k: "e", e: "⏱️", label: t("ob.q2.e"), sol: t("ob.q2.e_s") },
+    ];
+    const chosen = opts.find((o) => o.k === d.challenge);
+    return (
+      <div>
+        <Title title={t("ob.q2.title")} sub={t("ob.q2.sub")} />
+        <div className="space-y-2.5">
+          {opts.map((o) => (
+            <Option
+              key={o.k}
+              emoji={o.e}
+              active={d.challenge === o.k}
+              label={o.label}
+              onClick={() => set({ challenge: o.k })}
+            />
+          ))}
+        </div>
+        <AnimatePresence>
+          {chosen && (
+            <motion.div
+              initial={{ opacity: 0, y: 10, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-4 overflow-hidden"
+            >
+              <div className="glass-strong rounded-[22px] border border-emerald/25 p-4">
+                <div className="flex items-center gap-2 text-emerald">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span className="text-[11px] font-semibold uppercase tracking-widest">
+                    {t("ob.q2.solution")}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed">{chosen.sol}</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
+
+  if (step === 3) {
+    const age = d.age ?? 28;
+    return (
+      <div>
+        <Title title={t("ob.q3.title")} sub={t("ob.q3.sub")} />
+        <div className="glass-strong mt-6 rounded-[28px] p-7 text-center">
+          <motion.div key={age} initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="font-display text-6xl font-bold">
+            {age}
+          </motion.div>
+          <div className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{t("ob.q3.years")}</div>
+          <input
+            type="range"
+            min={13}
+            max={90}
+            value={age}
+            onChange={(e) => set({ age: Number(e.target.value) })}
+            className="mt-7 w-full accent-emerald"
           />
         </div>
-        <div className="mt-6 text-center">
-          <div className="font-display text-5xl font-bold">{value}</div>
-          <div className="mt-1 text-sm text-muted-foreground">glasses / day</div>
-        </div>
-        <input type="range" min={1} max={14} value={value} onChange={(e) => onChange(+e.target.value)} className="mt-4 w-full" style={{ accentColor: "oklch(0.72 0.15 235)" }} />
-        <div className="mt-3 flex items-center justify-center gap-1.5 text-xs text-hydration">
-          <Droplets className="h-3.5 w-3.5" />
-          <span>~{(value * 0.25).toFixed(1)} L</span>
+      </div>
+    );
+  }
+
+  if (step === 4) {
+    return (
+      <div>
+        <Title title={t("ob.q4.title")} sub={t("ob.q4.sub")} />
+        <div className="space-y-3">
+          <NumberField
+            label={t("ob.q4.height")}
+            unit="cm"
+            value={d.heightCm ?? 172}
+            min={120}
+            max={220}
+            onChange={(v) => set({ heightCm: v })}
+          />
+          <NumberField
+            label={t("ob.q4.weight")}
+            unit="kg"
+            value={d.weightKg ?? 72}
+            min={35}
+            max={250}
+            onChange={(v) => set({ weightKg: v })}
+          />
+          <NumberField
+            label={t("ob.q4.target")}
+            unit="kg"
+            value={d.targetWeightKg ?? d.weightKg ?? 68}
+            min={35}
+            max={250}
+            onChange={(v) => set({ targetWeightKg: v })}
+          />
         </div>
       </div>
+    );
+  }
+
+  if (step === 5) {
+    const opts = ["sedentary", "light", "moderate", "very", "athlete"] as const;
+    const emo: Record<string, string> = {
+      sedentary: "🪑",
+      light: "🚶",
+      moderate: "🏃",
+      very: "🏋️",
+      athlete: "🥇",
+    };
+    return (
+      <div>
+        <Title title={t("ob.q5.title")} sub={t("ob.q5.sub")} />
+        <div className="space-y-2.5">
+          {opts.map((o) => (
+            <Option
+              key={o}
+              emoji={emo[o]}
+              active={d.activity === o}
+              label={t(`ob.q5.${o}`)}
+              desc={t(`ob.q5.${o}_d`)}
+              onClick={() => pick({ activity: o })}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (step === 6) {
+    const opts = [
+      { k: "fat", e: "🔥" },
+      { k: "strength", e: "💪" },
+      { k: "energy", e: "⚡" },
+      { k: "lifestyle", e: "🌿" },
+    ];
+    return (
+      <div>
+        <Title title={t("ob.q6.title")} sub={t("ob.q6.sub")} />
+        <div className="space-y-2.5">
+          {opts.map((o) => (
+            <Option
+              key={o.k}
+              emoji={o.e}
+              active={d.bodyGoal === o.k}
+              label={t(`ob.q6.${o.k}`)}
+              onClick={() => pick({ bodyGoal: o.k })}
+            />
+          ))}
+        </div>
+        <p className="mt-5 text-center text-xs italic text-muted-foreground">{t("ob.q6.motivation")}</p>
+      </div>
+    );
+  }
+
+  if (step === 7) {
+    const opts = [
+      { k: "balanced", e: "🥗" },
+      { k: "irregular", e: "🕰️" },
+      { k: "fastfood", e: "🍔" },
+      { k: "homecooked", e: "🍲" },
+      { k: "improving", e: "🌱" },
+    ];
+    return (
+      <div>
+        <Title title={t("ob.q7.title")} sub={t("ob.q7.sub")} />
+        <div className="space-y-2.5">
+          {opts.map((o) => (
+            <Option
+              key={o.k}
+              emoji={o.e}
+              active={d.nutritionStyle === o.k}
+              label={t(`ob.q7.${o.k}`)}
+              onClick={() => pick({ nutritionStyle: o.k })}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (step === 8) {
+    const opts = [
+      { k: "lt1", e: "🥃" },
+      { k: "1to2", e: "🚰" },
+      { k: "2plus", e: "💧" },
+      { k: "unsure", e: "🤷" },
+    ];
+    return (
+      <div>
+        <Title title={t("ob.q8.title")} sub={t("ob.q8.sub")} />
+        <div className="space-y-2.5">
+          {opts.map((o) => (
+            <Option
+              key={o.k}
+              emoji={o.e}
+              active={d.hydration === o.k}
+              label={t(`ob.q8.${o.k}`)}
+              onClick={() => pick({ hydration: o.k })}
+            />
+          ))}
+        </div>
+        <div className="glass mt-5 rounded-[22px] p-4 text-xs leading-relaxed text-muted-foreground">
+          💧 {t("ob.q8.note")}
+        </div>
+      </div>
+    );
+  }
+
+  if (step === 9) {
+    const items = ["airfryer", "oven", "stove", "blender", "microwave", "grill", "ricecooker"].map((k) => ({
+      key: k,
+      label: t(`ob.q9.${k}`),
+    }));
+    return (
+      <div>
+        <Title title={t("ob.q9.title")} sub={t("ob.q9.sub")} />
+        <p className="mb-3 text-[11px] uppercase tracking-widest text-muted-foreground">{t("ob.selectMultiple")}</p>
+        <Chips items={items} selected={d.equipment ?? []} onToggle={(k) => set({ equipment: toggle(d.equipment, k) })} />
+      </div>
+    );
+  }
+
+  if (step === 10) {
+    const diets = ["vegan", "vegetarian", "lowcarb", "keto", "highprotein", "mediterranean", "none"].map((k) => ({
+      key: k,
+      label: t(`ob.q10.${k}`),
+    }));
+    const allergies = ["gluten", "lactose", "nuts", "seafood", "eggs", "soy"].map((k) => ({
+      key: k,
+      label: t(`ob.q10.${k}`),
+    }));
+    return (
+      <div className="pb-4">
+        <Title title={t("ob.q10.title")} sub={t("ob.q10.sub")} />
+        <div className="space-y-5">
+          <div>
+            <div className="mb-2 text-[11px] uppercase tracking-widest text-muted-foreground">{t("ob.q10.likes")}</div>
+            <TagInput value={d.likes ?? []} onChange={(v) => set({ likes: v })} placeholder={t("ob.q10.likesPh")} />
+          </div>
+          <div>
+            <div className="mb-2 text-[11px] uppercase tracking-widest text-muted-foreground">{t("ob.q10.avoid")}</div>
+            <TagInput value={d.avoids ?? []} onChange={(v) => set({ avoids: v })} placeholder={t("ob.q10.avoidPh")} />
+          </div>
+          <div>
+            <div className="mb-2 text-[11px] uppercase tracking-widest text-muted-foreground">{t("ob.q10.diets")}</div>
+            <Chips items={diets} selected={d.diets ?? []} onToggle={(k) => set({ diets: toggle(d.diets, k) })} />
+          </div>
+          <div>
+            <div className="mb-2 text-[11px] uppercase tracking-widest text-muted-foreground">{t("ob.q10.allergies")}</div>
+            <Chips
+              items={allergies}
+              selected={d.allergies ?? []}
+              onToggle={(k) => set({ allergies: toggle(d.allergies, k) })}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === 11) {
+    const opts = [
+      { k: "a", e: "⚡", label: t("ob.q11.a") },
+      { k: "b", e: "⏱️", label: t("ob.q11.b") },
+      { k: "c", e: "🍳", label: t("ob.q11.c") },
+      { k: "d", e: "👨‍🍳", label: t("ob.q11_d") },
+    ];
+    return (
+      <div>
+        <Title title={t("ob.q11.title")} sub={t("ob.q11.sub")} />
+        <div className="space-y-2.5">
+          {opts.map((o) => (
+            <Option
+              key={o.k}
+              emoji={o.e}
+              active={d.cookTime === o.k}
+              label={o.label}
+              onClick={() => pick({ cookTime: o.k })}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <Title title={t("ob.q12.title")} sub={t("ob.q12.sub")} />
+      <textarea
+        value={d.motivation ?? ""}
+        onChange={(e) => set({ motivation: e.target.value })}
+        rows={6}
+        placeholder={t("ob.q12.ph") as string}
+        className="glass w-full resize-none rounded-[22px] p-4 text-sm leading-relaxed outline-none placeholder:text-muted-foreground"
+      />
+      <p className="mt-4 text-xs leading-relaxed text-muted-foreground">✨ {t("ob.q12.hint")}</p>
     </div>
   );
 }
 
-function SkipStep({ title, subtitle }: { title: string; subtitle: string }) {
+function NumberField({
+  label,
+  unit,
+  value,
+  min,
+  max,
+  onChange,
+}: {
+  label: string;
+  unit: string;
+  value: number;
+  min: number;
+  max: number;
+  onChange: (v: number) => void;
+}) {
   return (
-    <div>
-      <StepHeader title={title} subtitle={subtitle} />
-      <div className="glass grid place-items-center rounded-3xl p-12">
-        <Sparkles className="h-16 w-16 text-emerald" />
+    <div className="glass-strong rounded-[22px] p-4">
+      <div className="flex items-baseline justify-between">
+        <span className="text-sm text-muted-foreground">{label}</span>
+        <span className="font-display text-2xl font-bold tabular-nums">
+          {value}
+          <span className="ml-1 text-sm font-medium text-muted-foreground">{unit}</span>
+        </span>
       </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="mt-3 w-full accent-emerald"
+      />
     </div>
   );
 }

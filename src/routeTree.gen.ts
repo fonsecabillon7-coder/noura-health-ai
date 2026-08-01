@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as ProcessingRouteImport } from './routes/processing'
-import { Route as IntroRouteImport } from './routes/intro'
+import { Route as PlanRouteImport } from './routes/plan'
+import { Route as PaywallRouteImport } from './routes/paywall'
+import { Route as LocaleRouteImport } from './routes/locale'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -37,9 +39,19 @@ const ProcessingRoute = ProcessingRouteImport.update({
   path: '/processing',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IntroRoute = IntroRouteImport.update({
-  id: '/intro',
-  path: '/intro',
+const PlanRoute = PlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaywallRoute = PaywallRouteImport.update({
+  id: '/paywall',
+  path: '/paywall',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocaleRoute = LocaleRouteImport.update({
+  id: '/locale',
+  path: '/locale',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -116,7 +128,9 @@ const AuthenticatedFocosHistoryRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/intro': typeof IntroRoute
+  '/locale': typeof LocaleRoute
+  '/paywall': typeof PaywallRoute
+  '/plan': typeof PlanRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/add': typeof AuthenticatedAddRoute
@@ -134,7 +148,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/intro': typeof IntroRoute
+  '/locale': typeof LocaleRoute
+  '/paywall': typeof PaywallRoute
+  '/plan': typeof PlanRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/add': typeof AuthenticatedAddRoute
@@ -154,7 +170,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
-  '/intro': typeof IntroRoute
+  '/locale': typeof LocaleRoute
+  '/paywall': typeof PaywallRoute
+  '/plan': typeof PlanRoute
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/_authenticated/add': typeof AuthenticatedAddRoute
@@ -174,7 +192,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/intro'
+    | '/locale'
+    | '/paywall'
+    | '/plan'
     | '/processing'
     | '/quiz'
     | '/add'
@@ -192,7 +212,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
-    | '/intro'
+    | '/locale'
+    | '/paywall'
+    | '/plan'
     | '/processing'
     | '/quiz'
     | '/add'
@@ -211,7 +233,9 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/intro'
+    | '/locale'
+    | '/paywall'
+    | '/plan'
     | '/processing'
     | '/quiz'
     | '/_authenticated/add'
@@ -231,7 +255,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
-  IntroRoute: typeof IntroRoute
+  LocaleRoute: typeof LocaleRoute
+  PaywallRoute: typeof PaywallRoute
+  PlanRoute: typeof PlanRoute
   ProcessingRoute: typeof ProcessingRoute
   QuizRoute: typeof QuizRoute
 }
@@ -252,11 +278,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProcessingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/intro': {
-      id: '/intro'
-      path: '/intro'
-      fullPath: '/intro'
-      preLoaderRoute: typeof IntroRouteImport
+    '/plan': {
+      id: '/plan'
+      path: '/plan'
+      fullPath: '/plan'
+      preLoaderRoute: typeof PlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paywall': {
+      id: '/paywall'
+      path: '/paywall'
+      fullPath: '/paywall'
+      preLoaderRoute: typeof PaywallRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/locale': {
+      id: '/locale'
+      path: '/locale'
+      fullPath: '/locale'
+      preLoaderRoute: typeof LocaleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -405,7 +445,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
-  IntroRoute: IntroRoute,
+  LocaleRoute: LocaleRoute,
+  PaywallRoute: PaywallRoute,
+  PlanRoute: PlanRoute,
   ProcessingRoute: ProcessingRoute,
   QuizRoute: QuizRoute,
 }

@@ -108,7 +108,7 @@ function Welcome() {
           transition={{ delay: 0.5 }}
           className="mt-8"
         >
-          <Link to="/intro" className="block">
+          <Link to="/auth" className="block">
             <motion.div
               whileTap={{ scale: 0.97 }}
               animate={{ scale: [1, 1.015, 1] }}
