@@ -1,11 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { BottomNav } from "@/components/bottom-nav";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getProfile, upsertProfile } from "@/lib/data.functions";
 import { useTranslation } from "react-i18next";
 import { LangSwitcher } from "@/components/lang-switcher";
-import { Crown, ChevronRight, Target, Droplets, Flame, LogOut } from "lucide-react";
+import { Crown, ChevronRight, Target, Droplets, Flame, LogOut, History as HistoryIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/profile")({ component: Profile });
@@ -94,7 +94,7 @@ function Profile() {
           className="glass mt-6 flex w-full items-center justify-between rounded-2xl px-4 py-4 text-sm font-medium"
         >
           <span className="flex items-center gap-2">
-            <History className="h-4 w-4 text-emerald" />
+            <HistoryIcon className="h-4 w-4 text-emerald" />
             {t("scans.title", { defaultValue: "Scan history" })}
           </span>
           <span className="text-muted-foreground">›</span>
