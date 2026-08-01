@@ -1,0 +1,203 @@
+{
+  "ob": {
+    "continue": "Continuar",
+    "back": "Atrás",
+    "step": "Paso",
+    "of": "de",
+    "skip": "Omitir por ahora",
+    "selectMultiple": "Selecciona todo lo que corresponda",
+    "typeHere": "Escribe aquí...",
+    "auth": {
+      "title": "Crea tu cuenta",
+      "sub": "Tu plan, tu progreso y tus hábitos — guardados para siempre.",
+      "google": "Continuar con Google",
+      "apple": "Continuar con Apple",
+      "email": "Continuar con Email",
+      "have": "¿Ya tienes cuenta?",
+      "signin": "Iniciar sesión",
+      "terms": "Al continuar aceptas nuestros Términos y la Política de Privacidad."
+    },
+    "loc": {
+      "title": "¿Dónde te encuentras?",
+      "sub": "Lo usamos para adaptar alimentos, unidades y recetas a tu región.",
+      "country": "País",
+      "language": "¿Qué idioma prefieres?",
+      "search": "Buscar país",
+      "note": "Neura AI hablará tu idioma en todo — panel, recetas y respuestas de IA."
+    },
+    "q1": {
+      "title": "¿Cuál es tu mayor objetivo ahora?",
+      "sub": "Construimos todo tu plan alrededor de esto.",
+      "lose": "Perder peso",
+      "lose_d": "Quemar grasa sin renunciar a la comida real",
+      "muscle": "Ganar músculo",
+      "muscle_d": "Más fuerza con suficiente proteína",
+      "maintain": "Mantener mi cuerpo",
+      "maintain_d": "Constancia y equilibrio",
+      "health": "Mejorar mi salud",
+      "health_d": "Más energía, mejor nutrición",
+      "habits": "Crear mejores hábitos",
+      "habits_d": "Pequeñas acciones diarias que duran"
+    },
+    "q2": {
+      "title": "¿Qué te impide alcanzar tu objetivo?",
+      "sub": "Sé honesto — esto define cómo te ayuda Neura.",
+      "a": "No sé qué comer",
+      "a_s": "Neura AI te ayudará a descubrir comidas según tus objetivos y los ingredientes que ya tienes.",
+      "b": "Me cuesta la constancia",
+      "b_s": "Tu sistema de enfoques diarios y rachas te mantiene incluso en los días difíciles.",
+      "c": "No registro mi nutrición",
+      "c_s": "Basta una foto — Neura lee calorías, proteínas, carbohidratos y grasas.",
+      "d_s": "Metas inteligentes de hidratación y progreso visual hacen que el agua sea fácil.",
+      "e": "No tengo tiempo para cocinar",
+      "e_s": "Neura crea recetas rápidas que encajan con tu horario y tu cocina.",
+      "solution": "Cómo te ayuda Neura AI"
+    },
+    "q2_d": "No bebo suficiente agua",
+    "q3": {
+      "title": "¿Cuántos años tienes?",
+      "sub": "La edad cambia tu metabolismo y tus metas nutricionales.",
+      "years": "años"
+    },
+    "q4": {
+      "title": "Tu cuerpo hoy",
+      "sub": "Es privado y solo sirve para calcular tus metas.",
+      "height": "Altura",
+      "weight": "Peso actual",
+      "target": "Peso objetivo"
+    },
+    "q5": {
+      "title": "¿Qué tan activo eres?",
+      "sub": "El movimiento define cuánta energía necesita tu cuerpo.",
+      "sedentary": "Casi siempre sentado",
+      "sedentary_d": "Trabajo de oficina, poco movimiento",
+      "light": "Ligeramente activo",
+      "light_d": "Caminatas, 1-2 entrenos por semana",
+      "moderate": "Moderadamente activo",
+      "moderate_d": "3-4 entrenos por semana",
+      "very": "Muy activo",
+      "very_d": "5-6 entrenos por semana",
+      "athlete": "Atleta",
+      "athlete_d": "Entrenamiento intenso diario"
+    },
+    "q6": {
+      "title": "¿Qué resultado buscas?",
+      "sub": "La razón detrás del número.",
+      "fat": "Perder grasa",
+      "strength": "Ganar fuerza",
+      "energy": "Mejorar la energía",
+      "lifestyle": "Crear un estilo de vida más sano",
+      "motivation": "Con constancia, tu objetivo se acerca cada día."
+    },
+    "q7": {
+      "title": "¿Cómo comes actualmente?",
+      "sub": "Sin juicios — solo un punto de partida.",
+      "balanced": "Equilibrado",
+      "irregular": "Irregular",
+      "fastfood": "Comida rápida a menudo",
+      "homecooked": "Comida casera",
+      "improving": "Intentando mejorar"
+    },
+    "q8": {
+      "title": "¿Cuánta agua bebes al día?",
+      "sub": "La hidratación es la victoria más rápida del bienestar.",
+      "lt1": "Menos de 1L",
+      "1to2": "1-2L",
+      "2plus": "2L o más",
+      "unsure": "No estoy seguro",
+      "note": "La hidratación afecta la energía, el rendimiento y el bienestar general."
+    },
+    "q9": {
+      "title": "¿Qué equipos tienes en casa?",
+      "sub": "Tus recetas solo usarán lo que realmente tienes.",
+      "airfryer": "Freidora de aire",
+      "oven": "Horno",
+      "stove": "Estufa",
+      "blender": "Licuadora",
+      "microwave": "Microondas",
+      "grill": "Parrilla",
+      "ricecooker": "Arrocera"
+    },
+    "q10": {
+      "title": "¿Qué tipo de comidas prefieres?",
+      "sub": "Neura nunca sugerirá algo que no quieras comer.",
+      "likes": "Comidas favoritas",
+      "likesPh": "Pollo, arroz, mango...",
+      "avoid": "Comidas a evitar",
+      "avoidPh": "Hígado, comida picante...",
+      "diets": "Preferencias de dieta",
+      "allergies": "Alergias",
+      "vegan": "Vegano",
+      "vegetarian": "Vegetariano",
+      "lowcarb": "Bajo en carbohidratos",
+      "keto": "Keto",
+      "highprotein": "Alto en proteína",
+      "mediterranean": "Mediterráneo",
+      "none": "Sin restricción",
+      "gluten": "Gluten",
+      "lactose": "Lactosa",
+      "nuts": "Frutos secos",
+      "seafood": "Mariscos",
+      "eggs": "Huevos",
+      "soy": "Soja"
+    },
+    "q11": {
+      "title": "¿Cuánto tiempo tienes para cocinar?",
+      "sub": "Cada receta cabrá en ese tiempo.",
+      "a": "5-15 minutos",
+      "b": "15-30 minutos",
+      "c": "30-60 minutos"
+    },
+    "q11_d": "Más de 1 hora",
+    "q12": {
+      "title": "¿Por qué es importante este objetivo para ti?",
+      "sub": "Escríbelo con tus palabras. Te lo recordaremos en los días difíciles.",
+      "ph": "Porque quiero sentirme fuerte y presente para mi familia...",
+      "hint": "Quien escribe su motivo tiene muchas más posibilidades de mantener la constancia."
+    },
+    "proc": {
+      "title": "Creando tu plan",
+      "1": "Analizando tus objetivos...",
+      "2": "Creando tus metas nutricionales...",
+      "3": "Construyendo tu plan de hidratación...",
+      "4": "Preparando recetas personalizadas...",
+      "5": "Diseñando tus hábitos diarios..."
+    },
+    "plan": {
+      "ready": "Tu plan de bienestar personalizado está listo.",
+      "sub": "Creado con tus respuestas — no es una plantilla genérica.",
+      "calories": "Calorías diarias",
+      "protein": "Proteína",
+      "carbs": "Carbohidratos",
+      "fat": "Grasa",
+      "water": "Meta de agua",
+      "macros": "Tus macros diarios",
+      "habits": "Hábitos sugeridos",
+      "recipes": "Recetas elegidas para ti",
+      "weekly": "Tus primeras 4 semanas",
+      "cta": "Comenzar mi plan",
+      "forYou": "Hecho para ti"
+    },
+    "pay": {
+      "title": "Comienza tu transformación con Neura AI.",
+      "sub": "Un compañero diario, no otra dieta temporal.",
+      "monthly": "Mensual",
+      "annual": "Anual",
+      "perMonth": "al mes",
+      "perYear": "al año",
+      "recommended": "Recomendado",
+      "trial": "3 días gratis",
+      "today": "US$0,00 hoy",
+      "b1": "Análisis de comida con IA ilimitado",
+      "b2": "Recetas y bebidas personalizadas",
+      "b3": "Control de hidratación",
+      "b4": "Sistema de hábitos y rachas",
+      "b5": "Informes de progreso",
+      "cta": "Continuar",
+      "ctaTrial": "Comenzar prueba gratis",
+      "later": "Quizá más tarde",
+      "legal": "Cancela cuando quieras. Pago seguro en el checkout.",
+      "save": "Ahorra 79%"
+    }
+  }
+}

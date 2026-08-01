@@ -1,0 +1,203 @@
+{
+  "ob": {
+    "continue": "Weiter",
+    "back": "Zurück",
+    "step": "Schritt",
+    "of": "von",
+    "skip": "Erstmal überspringen",
+    "selectMultiple": "Wähle alles Passende",
+    "typeHere": "Hier schreiben...",
+    "auth": {
+      "title": "Erstelle dein Konto",
+      "sub": "Dein Plan, dein Fortschritt und deine Gewohnheiten — für immer gespeichert.",
+      "google": "Weiter mit Google",
+      "apple": "Weiter mit Apple",
+      "email": "Weiter mit E-Mail",
+      "have": "Schon ein Konto?",
+      "signin": "Anmelden",
+      "terms": "Mit dem Fortfahren akzeptierst du unsere AGB und Datenschutzerklärung."
+    },
+    "loc": {
+      "title": "Wo befindest du dich?",
+      "sub": "Damit passen wir Lebensmittel, Einheiten und Rezepte an deine Region an.",
+      "country": "Land",
+      "language": "Welche Sprache bevorzugst du?",
+      "search": "Land suchen",
+      "note": "Neura AI spricht überall deine Sprache — Dashboard, Rezepte und KI-Antworten."
+    },
+    "q1": {
+      "title": "Was ist gerade dein größtes Ziel?",
+      "sub": "Dein ganzer Plan wird darauf aufgebaut.",
+      "lose": "Abnehmen",
+      "lose_d": "Fett verlieren, ohne auf echtes Essen zu verzichten",
+      "muscle": "Muskeln aufbauen",
+      "muscle_d": "Mehr Kraft mit genug Protein",
+      "maintain": "Gewicht halten",
+      "maintain_d": "Konstanz und Balance",
+      "health": "Gesünder werden",
+      "health_d": "Mehr Energie, bessere Ernährung",
+      "habits": "Bessere Gewohnheiten",
+      "habits_d": "Kleine tägliche Schritte, die bleiben"
+    },
+    "q2": {
+      "title": "Was hält dich von deinem Ziel ab?",
+      "sub": "Sei ehrlich — das bestimmt, wie Neura dir hilft.",
+      "a": "Ich weiß nicht, was ich essen soll",
+      "a_s": "Neura AI zeigt dir Mahlzeiten nach deinen Zielen und den Zutaten, die du schon hast.",
+      "b": "Mir fehlt die Konstanz",
+      "b_s": "Dein tägliches Fokus-System und Serien halten dich auch an harten Tagen dabei.",
+      "c": "Ich tracke meine Ernährung nicht",
+      "c_s": "Ein Foto reicht — Neura liest Kalorien, Protein, Kohlenhydrate und Fett.",
+      "d_s": "Smarte Trinkziele und sichtbarer Fortschritt machen Wasser einfach.",
+      "e": "Ich habe keine Zeit zum Kochen",
+      "e_s": "Neura erstellt schnelle Rezepte, die zu deinem Alltag und deiner Küche passen.",
+      "solution": "So hilft dir Neura AI"
+    },
+    "q2_d": "Ich trinke zu wenig Wasser",
+    "q3": {
+      "title": "Wie alt bist du?",
+      "sub": "Das Alter verändert deinen Stoffwechsel und deine Ziele.",
+      "years": "Jahre"
+    },
+    "q4": {
+      "title": "Dein Körper heute",
+      "sub": "Bleibt privat und dient nur der Berechnung deiner Ziele.",
+      "height": "Größe",
+      "weight": "Aktuelles Gewicht",
+      "target": "Zielgewicht"
+    },
+    "q5": {
+      "title": "Wie aktiv bist du?",
+      "sub": "Bewegung bestimmt, wie viel Energie dein Körper braucht.",
+      "sedentary": "Meist sitzend",
+      "sedentary_d": "Bürojob, wenig Bewegung",
+      "light": "Leicht aktiv",
+      "light_d": "Spaziergänge, 1-2 Workouts pro Woche",
+      "moderate": "Mäßig aktiv",
+      "moderate_d": "3-4 Workouts pro Woche",
+      "very": "Sehr aktiv",
+      "very_d": "5-6 Workouts pro Woche",
+      "athlete": "Sportler",
+      "athlete_d": "Tägliches intensives Training"
+    },
+    "q6": {
+      "title": "Welches Ergebnis willst du erreichen?",
+      "sub": "Der Grund hinter der Zahl.",
+      "fat": "Fett verlieren",
+      "strength": "Kraft aufbauen",
+      "energy": "Mehr Energie",
+      "lifestyle": "Gesünderen Lebensstil aufbauen",
+      "motivation": "Mit Konstanz kommt dein Ziel jeden Tag näher."
+    },
+    "q7": {
+      "title": "Wie isst du aktuell?",
+      "sub": "Kein Urteil — nur ein Startpunkt.",
+      "balanced": "Ausgewogen",
+      "irregular": "Unregelmäßig",
+      "fastfood": "Oft Fast Food",
+      "homecooked": "Selbst gekocht",
+      "improving": "Ich versuche mich zu verbessern"
+    },
+    "q8": {
+      "title": "Wie viel Wasser trinkst du täglich?",
+      "sub": "Hydration ist der schnellste Gewinn für dein Wohlbefinden.",
+      "lt1": "Weniger als 1L",
+      "1to2": "1-2L",
+      "2plus": "2L oder mehr",
+      "unsure": "Weiß nicht",
+      "note": "Hydration beeinflusst Energie, Leistung und Wohlbefinden."
+    },
+    "q9": {
+      "title": "Welche Geräte hast du zu Hause?",
+      "sub": "Deine Rezepte nutzen nur das, was du wirklich hast.",
+      "airfryer": "Heißluftfritteuse",
+      "oven": "Backofen",
+      "stove": "Herd",
+      "blender": "Mixer",
+      "microwave": "Mikrowelle",
+      "grill": "Grill",
+      "ricecooker": "Reiskocher"
+    },
+    "q10": {
+      "title": "Welche Mahlzeiten bevorzugst du?",
+      "sub": "Neura schlägt nie etwas vor, das du nicht essen willst.",
+      "likes": "Lieblingsessen",
+      "likesPh": "Hähnchen, Reis, Mango...",
+      "avoid": "Zu vermeiden",
+      "avoidPh": "Leber, scharfes Essen...",
+      "diets": "Ernährungsweise",
+      "allergies": "Allergien",
+      "vegan": "Vegan",
+      "vegetarian": "Vegetarisch",
+      "lowcarb": "Low Carb",
+      "keto": "Keto",
+      "highprotein": "Proteinreich",
+      "mediterranean": "Mediterran",
+      "none": "Keine Einschränkung",
+      "gluten": "Gluten",
+      "lactose": "Laktose",
+      "nuts": "Nüsse",
+      "seafood": "Meeresfrüchte",
+      "eggs": "Eier",
+      "soy": "Soja"
+    },
+    "q11": {
+      "title": "Wie viel Zeit hast du zum Kochen?",
+      "sub": "Jedes Rezept passt in dieses Zeitfenster.",
+      "a": "5-15 Minuten",
+      "b": "15-30 Minuten",
+      "c": "30-60 Minuten"
+    },
+    "q11_d": "Mehr als 1 Stunde",
+    "q12": {
+      "title": "Warum ist dir dieses Ziel wichtig?",
+      "sub": "Schreib es in deinen Worten. Wir erinnern dich an harten Tagen daran.",
+      "ph": "Weil ich mich stark fühlen und für meine Familie da sein will...",
+      "hint": "Wer seinen Grund aufschreibt, bleibt deutlich konstanter."
+    },
+    "proc": {
+      "title": "Dein Plan entsteht",
+      "1": "Deine Ziele werden analysiert...",
+      "2": "Deine Nährwertziele werden erstellt...",
+      "3": "Dein Trinkplan wird gebaut...",
+      "4": "Personalisierte Rezepte werden vorbereitet...",
+      "5": "Deine täglichen Gewohnheiten werden gestaltet..."
+    },
+    "plan": {
+      "ready": "Dein persönlicher Wellness-Plan ist fertig.",
+      "sub": "Aus deinen Antworten gebaut — keine Standardvorlage.",
+      "calories": "Kalorien pro Tag",
+      "protein": "Protein",
+      "carbs": "Kohlenhydrate",
+      "fat": "Fett",
+      "water": "Trinkziel",
+      "macros": "Deine täglichen Makros",
+      "habits": "Empfohlene Gewohnheiten",
+      "recipes": "Rezepte für dich",
+      "weekly": "Deine ersten 4 Wochen",
+      "cta": "Plan starten",
+      "forYou": "Für dich gemacht"
+    },
+    "pay": {
+      "title": "Starte deine Veränderung mit Neura AI.",
+      "sub": "Ein täglicher Begleiter, keine weitere kurzfristige Diät.",
+      "monthly": "Monatlich",
+      "annual": "Jährlich",
+      "perMonth": "pro Monat",
+      "perYear": "pro Jahr",
+      "recommended": "Empfohlen",
+      "trial": "3 Tage kostenlos",
+      "today": "US$0,00 heute",
+      "b1": "Unbegrenzte KI-Essensanalyse",
+      "b2": "Personalisierte Rezepte und Drinks",
+      "b3": "Hydrations-Tracking",
+      "b4": "Gewohnheits- und Serien-System",
+      "b5": "Fortschritts-Insights",
+      "cta": "Weiter",
+      "ctaTrial": "Kostenlos testen",
+      "later": "Vielleicht später",
+      "legal": "Jederzeit kündbar. Zahlung sicher im Checkout.",
+      "save": "79% sparen"
+    }
+  }
+}
