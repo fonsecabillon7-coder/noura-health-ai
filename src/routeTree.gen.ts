@@ -26,7 +26,10 @@ import { Route as AuthenticatedMealsRouteImport } from './routes/_authenticated.
 import { Route as AuthenticatedHydrationRouteImport } from './routes/_authenticated.hydration'
 import { Route as AuthenticatedFocosRouteImport } from './routes/_authenticated.focos'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
+import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated.checkout'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as AuthenticatedAddRouteImport } from './routes/_authenticated.add'
+import { Route as ApiPublicHotmartRouteImport } from './routes/api/public/hotmart'
 import { Route as AuthenticatedFocosHistoryRouteImport } from './routes/_authenticated.focos.history'
 
 const QuizRoute = QuizRouteImport.update({
@@ -113,10 +116,25 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAddRoute = AuthenticatedAddRouteImport.update({
   id: '/add',
   path: '/add',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+const ApiPublicHotmartRoute = ApiPublicHotmartRouteImport.update({
+  id: '/api/public/hotmart',
+  path: '/api/public/hotmart',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedFocosHistoryRoute =
   AuthenticatedFocosHistoryRouteImport.update({
@@ -134,6 +152,8 @@ export interface FileRoutesByFullPath {
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/add': typeof AuthenticatedAddRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/checkout': typeof AuthenticatedCheckoutRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/focos': typeof AuthenticatedFocosRouteWithChildren
   '/hydration': typeof AuthenticatedHydrationRoute
@@ -144,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/scans': typeof AuthenticatedScansRoute
   '/shopping': typeof AuthenticatedShoppingRoute
   '/focos/history': typeof AuthenticatedFocosHistoryRoute
+  '/api/public/hotmart': typeof ApiPublicHotmartRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -154,6 +175,8 @@ export interface FileRoutesByTo {
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/add': typeof AuthenticatedAddRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/checkout': typeof AuthenticatedCheckoutRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/focos': typeof AuthenticatedFocosRouteWithChildren
   '/hydration': typeof AuthenticatedHydrationRoute
@@ -164,6 +187,7 @@ export interface FileRoutesByTo {
   '/scans': typeof AuthenticatedScansRoute
   '/shopping': typeof AuthenticatedShoppingRoute
   '/focos/history': typeof AuthenticatedFocosHistoryRoute
+  '/api/public/hotmart': typeof ApiPublicHotmartRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -176,6 +200,8 @@ export interface FileRoutesById {
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/_authenticated/add': typeof AuthenticatedAddRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/focos': typeof AuthenticatedFocosRouteWithChildren
   '/_authenticated/hydration': typeof AuthenticatedHydrationRoute
@@ -186,6 +212,7 @@ export interface FileRoutesById {
   '/_authenticated/scans': typeof AuthenticatedScansRoute
   '/_authenticated/shopping': typeof AuthenticatedShoppingRoute
   '/_authenticated/focos/history': typeof AuthenticatedFocosHistoryRoute
+  '/api/public/hotmart': typeof ApiPublicHotmartRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -198,6 +225,8 @@ export interface FileRouteTypes {
     | '/processing'
     | '/quiz'
     | '/add'
+    | '/admin'
+    | '/checkout'
     | '/dashboard'
     | '/focos'
     | '/hydration'
@@ -208,6 +237,7 @@ export interface FileRouteTypes {
     | '/scans'
     | '/shopping'
     | '/focos/history'
+    | '/api/public/hotmart'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -218,6 +248,8 @@ export interface FileRouteTypes {
     | '/processing'
     | '/quiz'
     | '/add'
+    | '/admin'
+    | '/checkout'
     | '/dashboard'
     | '/focos'
     | '/hydration'
@@ -228,6 +260,7 @@ export interface FileRouteTypes {
     | '/scans'
     | '/shopping'
     | '/focos/history'
+    | '/api/public/hotmart'
   id:
     | '__root__'
     | '/'
@@ -239,6 +272,8 @@ export interface FileRouteTypes {
     | '/processing'
     | '/quiz'
     | '/_authenticated/add'
+    | '/_authenticated/admin'
+    | '/_authenticated/checkout'
     | '/_authenticated/dashboard'
     | '/_authenticated/focos'
     | '/_authenticated/hydration'
@@ -249,6 +284,7 @@ export interface FileRouteTypes {
     | '/_authenticated/scans'
     | '/_authenticated/shopping'
     | '/_authenticated/focos/history'
+    | '/api/public/hotmart'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -260,6 +296,7 @@ export interface RootRouteChildren {
   PlanRoute: typeof PlanRoute
   ProcessingRoute: typeof ProcessingRoute
   QuizRoute: typeof QuizRoute
+  ApiPublicHotmartRoute: typeof ApiPublicHotmartRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -383,12 +420,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/checkout': {
+      id: '/_authenticated/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/add': {
       id: '/_authenticated/add'
       path: '/add'
       fullPath: '/add'
       preLoaderRoute: typeof AuthenticatedAddRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/api/public/hotmart': {
+      id: '/api/public/hotmart'
+      path: '/api/public/hotmart'
+      fullPath: '/api/public/hotmart'
+      preLoaderRoute: typeof ApiPublicHotmartRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/focos/history': {
       id: '/_authenticated/focos/history'
@@ -413,6 +471,8 @@ const AuthenticatedFocosRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAddRoute: typeof AuthenticatedAddRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFocosRoute: typeof AuthenticatedFocosRouteWithChildren
   AuthenticatedHydrationRoute: typeof AuthenticatedHydrationRoute
@@ -426,6 +486,8 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAddRoute: AuthenticatedAddRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFocosRoute: AuthenticatedFocosRouteWithChildren,
   AuthenticatedHydrationRoute: AuthenticatedHydrationRoute,
@@ -450,6 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanRoute: PlanRoute,
   ProcessingRoute: ProcessingRoute,
   QuizRoute: QuizRoute,
+  ApiPublicHotmartRoute: ApiPublicHotmartRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

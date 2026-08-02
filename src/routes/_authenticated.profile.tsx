@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 import { LangSwitcher } from "@/components/lang-switcher";
 import { Crown, ChevronRight, Target, Droplets, Flame, LogOut, History as HistoryIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useSubscription } from "@/hooks/use-subscription";
+import { amIAdmin } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/profile")({ component: Profile });
 
@@ -14,8 +16,11 @@ function Profile() {
   const { t, i18n } = useTranslation();
   const fetch = useServerFn(getProfile);
   const save = useServerFn(upsertProfile);
+  const adminCheck = useServerFn(amIAdmin);
   const qc = useQueryClient();
   const nav = useNavigate();
+  const { premium, status } = useSubscription();
+  const isAdmin = useQuery({ queryKey: ["is-admin"], queryFn: () => adminCheck() });
   const { data: profile } = useQuery({ queryKey: ["profile"], queryFn: () => fetch() });
   const mut = useMutation({
     mutationFn: (data: Record<string, unknown>) => save({ data }),
@@ -45,8 +50,8 @@ function Profile() {
                   <div className="text-xs text-muted-foreground">{profile?.goal || ""}</div>
                 </div>
               </div>
-              <button className="mt-4 flex w-full items-center justify-between rounded-2xl bg-gradient-to-r from-gold/25 to-gold/10 p-3">
-                <div className="flex items-center gap-2"><Crown className="h-5 w-5 text-gold" /><span className="font-semibold text-gold">Premium</span></div>
+              <button onClick={() => nav({ to: premium ? "/checkout" : "/paywall", ...(premium ? { search: { cycle: "annual" as const } } : {}) } as any)} className="mt-4 flex w-full items-center justify-between rounded-2xl bg-gradient-to-r from-gold/25 to-gold/10 p-3">
+                <div className="flex items-center gap-2"><Crown className="h-5 w-5 text-gold" /><span className="font-semibold text-gold">{premium ? `Premium · ${status}` : "Upgrade to Premium"}</span></div>
                 <ChevronRight className="h-4 w-4 text-gold" />
               </button>
             </div>
@@ -99,6 +104,13 @@ function Profile() {
           </span>
           <span className="text-muted-foreground">›</span>
         </Link>
+
+        {isAdmin.data?.admin && (
+          <Link to="/admin" className="glass mt-3 flex w-full items-center justify-between rounded-2xl px-4 py-4 text-sm font-medium">
+            <span className="flex items-center gap-2">👑 Admin dashboard</span>
+            <span className="text-muted-foreground">›</span>
+          </Link>
+        )}
 
         <button onClick={signOut} className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 py-4 text-sm">
           <LogOut className="h-4 w-4" /> {t("common.signOut")}

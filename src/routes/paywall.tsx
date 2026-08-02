@@ -1,10 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Check, Sparkles, X } from "lucide-react";
+import { Check, Sparkles, X, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useServerFn } from "@tanstack/react-start";
 import { buildPlan, clearOnboarding, loadOnboarding } from "@/lib/noura";
 import { supabase } from "@/integrations/supabase/client";
+import { listPlans, trackEvent } from "@/lib/billing.functions";
 
 export const Route = createFileRoute("/paywall")({
   component: Paywall,
@@ -20,16 +22,35 @@ export const Route = createFileRoute("/paywall")({
   }),
 });
 
+const FALLBACK = {
+  monthly: { price_usd: 4.99, trial_days: 7 },
+  annual: { price_usd: 39.99, trial_days: 7 },
+};
+
 function Paywall() {
   const { t } = useTranslation();
   const nav = useNavigate();
+  const plansFn = useServerFn(listPlans);
+  const track = useServerFn(trackEvent);
   const [sel, setSel] = useState<"annual" | "monthly">("annual");
   const [saving, setSaving] = useState(false);
+  const [plans, setPlans] = useState<any>(FALLBACK);
   const [d, setD] = useState(loadOnboarding());
-  useEffect(() => setD(loadOnboarding()), []);
 
-  async function finish(plan: "free" | "premium") {
-    setSaving(true);
+  useEffect(() => {
+    setD(loadOnboarding());
+    plansFn()
+      .then((p: any) =>
+        setPlans({
+          monthly: p.monthly ?? FALLBACK.monthly,
+          annual: p.annual ?? FALLBACK.annual,
+        }),
+      )
+      .catch(() => {});
+    track({ data: { name: "paywall_viewed", props: {} } }).catch(() => {});
+  }, []);
+
+  async function syncProfile(plan: "free" | "premium") {
     const p = buildPlan(d);
     try {
       const { data } = await supabase.auth.getUser();
@@ -56,6 +77,7 @@ function Paywall() {
             motivation: d.motivation ?? null,
             country: d.country ?? null,
             language: d.language ?? "en-US",
+            acquisition_source: d.source ?? null,
             kcal_goal: p.kcal,
             protein_goal: p.protein,
             carbs_goal: p.carbs,
@@ -64,24 +86,41 @@ function Paywall() {
             water_goal_ml: p.waterMl,
             onboarding_completed: true,
             plan,
-          })
+          } as any)
           .eq("user_id", data.user.id);
       }
       clearOnboarding();
     } catch {
       /* profile sync retried on next dashboard load */
     }
+  }
+
+  async function skip() {
+    setSaving(true);
+    await syncProfile("free");
+    track({ data: { name: "paywall_skipped", props: {} } }).catch(() => {});
     nav({ to: "/dashboard" });
   }
 
+  async function subscribe() {
+    setSaving(true);
+    await syncProfile("free");
+    track({ data: { name: "checkout_started", props: { cycle: sel } } }).catch(() => {});
+    nav({ to: "/checkout", search: { cycle: sel } });
+  }
+
   const benefits = ["b1", "b2", "b3", "b4", "b5"].map((k) => t(`ob.pay.${k}`));
+  const annualPrice = Number(plans.annual?.price_usd ?? 39.99);
+  const monthlyPrice = Number(plans.monthly?.price_usd ?? 4.99);
+  const trialDays = Number(plans.annual?.trial_days ?? 7);
+  const savePct = Math.max(0, Math.round((1 - annualPrice / (monthlyPrice * 12)) * 100));
 
   return (
     <div className="relative min-h-screen overflow-hidden">
       <div className="pointer-events-none absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-emerald/20 blur-[130px]" />
-      <div className="relative z-10 mx-auto max-w-md px-6 pb-32 pt-14">
+      <div className="relative z-10 mx-auto max-w-md px-6 pb-40 pt-14">
         <button
-          onClick={() => finish("free")}
+          onClick={skip}
           className="grid h-9 w-9 place-items-center rounded-full bg-white/8"
           aria-label={t("ob.pay.later") as string}
         >
@@ -123,11 +162,15 @@ function Paywall() {
           >
             <div className="flex-1">
               <div className="text-[15px] font-semibold">{t("ob.pay.annual")}</div>
-              <div className="text-xs text-muted-foreground">US$49.90 {t("ob.pay.perYear")}</div>
+              <div className="text-xs text-muted-foreground">
+                US${annualPrice.toFixed(2)} {t("ob.pay.perYear")} · US${(annualPrice / 12).toFixed(2)}/mo
+              </div>
             </div>
-            <span className="rounded-full bg-emerald px-2.5 py-1 text-[10px] font-bold text-black">
-              {t("ob.pay.save")}
-            </span>
+            {savePct > 0 && (
+              <span className="rounded-full bg-emerald px-2.5 py-1 text-[10px] font-bold text-black">
+                −{savePct}%
+              </span>
+            )}
           </button>
           <button
             onClick={() => setSel("monthly")}
@@ -137,13 +180,14 @@ function Paywall() {
           >
             <div className="flex-1">
               <div className="text-[15px] font-semibold">{t("ob.pay.monthly")}</div>
-              <div className="text-xs text-muted-foreground">US$19.90 {t("ob.pay.perMonth")}</div>
+              <div className="text-xs text-muted-foreground">US${monthlyPrice.toFixed(2)} {t("ob.pay.perMonth")}</div>
             </div>
           </button>
         </div>
 
         <p className="mt-4 text-center text-xs text-muted-foreground">
-          {t("ob.pay.trial")} · {t("ob.pay.today")}
+          {trialDays > 0 ? `${trialDays} days free · ` : ""}
+          {t("ob.pay.today")}
         </p>
       </div>
 
@@ -151,12 +195,13 @@ function Paywall() {
         <div className="mx-auto max-w-md">
           <button
             disabled={saving}
-            onClick={() => finish("premium")}
-            className="w-full rounded-[24px] bg-white py-4 text-[15px] font-semibold text-black disabled:opacity-60"
+            onClick={subscribe}
+            className="flex w-full items-center justify-center gap-2 rounded-[24px] bg-white py-4 text-[15px] font-semibold text-black disabled:opacity-60"
           >
+            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
             {t("ob.pay.ctaTrial")}
           </button>
-          <button onClick={() => finish("free")} className="mt-3 w-full py-2 text-xs text-muted-foreground">
+          <button onClick={skip} className="mt-3 w-full py-2 text-xs text-muted-foreground">
             {t("ob.pay.later")}
           </button>
           <p className="mt-2 text-center text-[10px] text-muted-foreground/70">{t("ob.pay.legal")}</p>

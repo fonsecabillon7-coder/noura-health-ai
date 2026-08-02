@@ -19,7 +19,7 @@ export const Route = createFileRoute("/quiz")({
   }),
 });
 
-const TOTAL = 12;
+const TOTAL = 13;
 
 function haptic() {
   if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate?.(8);
@@ -89,6 +89,9 @@ function Quiz() {
         return !!d.hydration;
       case 11:
         return !!d.cookTime;
+      case 12:
+        return !!d.source;
+
       default:
         return true;
     }
@@ -610,6 +613,36 @@ function Step({
               active={d.cookTime === o.k}
               label={o.label}
               onClick={() => pick({ cookTime: o.k })}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (step === 12) {
+    const opts = [
+      { k: "tiktok", e: "🎵", label: "TikTok" },
+      { k: "instagram", e: "📸", label: "Instagram" },
+      { k: "youtube", e: "▶️", label: "YouTube" },
+      { k: "friend", e: "🫶", label: t("ob.q13.friend", { defaultValue: "Friend or family" }) },
+      { k: "search", e: "🔎", label: t("ob.q13.search", { defaultValue: "Google / App Store" }) },
+      { k: "other", e: "✨", label: t("ob.q13.other", { defaultValue: "Somewhere else" }) },
+    ];
+    return (
+      <div>
+        <Title
+          title={t("ob.q13.title", { defaultValue: "How did you discover Neura AI?" })}
+          sub={t("ob.q13.sub", { defaultValue: "This helps us keep improving your experience." })}
+        />
+        <div className="space-y-2.5">
+          {opts.map((o) => (
+            <Option
+              key={o.k}
+              emoji={o.e}
+              active={d.source === o.k}
+              label={o.label}
+              onClick={() => pick({ source: o.k })}
             />
           ))}
         </div>
