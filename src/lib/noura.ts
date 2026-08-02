@@ -24,6 +24,9 @@ export interface OnboardingData {
   allergies?: string[];
   cookTime?: string;
   motivation?: string;
+  /** How the user discovered Neura AI (acquisition source) */
+  source?: string;
+
 }
 
 const KEY = "neura.onboarding";
