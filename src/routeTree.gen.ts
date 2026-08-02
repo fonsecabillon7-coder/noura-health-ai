@@ -26,6 +26,7 @@ import { Route as AuthenticatedMealsRouteImport } from './routes/_authenticated.
 import { Route as AuthenticatedHydrationRouteImport } from './routes/_authenticated.hydration'
 import { Route as AuthenticatedFocosRouteImport } from './routes/_authenticated.focos'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
+import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated.checkout'
 import { Route as AuthenticatedAddRouteImport } from './routes/_authenticated.add'
 import { Route as ApiPublicHotmartRouteImport } from './routes/api/public/hotmart'
 import { Route as AuthenticatedFocosHistoryRouteImport } from './routes/_authenticated.focos.history'
@@ -114,6 +115,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAddRoute = AuthenticatedAddRouteImport.update({
   id: '/add',
   path: '/add',
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/add': typeof AuthenticatedAddRoute
+  '/checkout': typeof AuthenticatedCheckoutRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/focos': typeof AuthenticatedFocosRouteWithChildren
   '/hydration': typeof AuthenticatedHydrationRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/add': typeof AuthenticatedAddRoute
+  '/checkout': typeof AuthenticatedCheckoutRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/focos': typeof AuthenticatedFocosRouteWithChildren
   '/hydration': typeof AuthenticatedHydrationRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/processing': typeof ProcessingRoute
   '/quiz': typeof QuizRoute
   '/_authenticated/add': typeof AuthenticatedAddRoute
+  '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/focos': typeof AuthenticatedFocosRouteWithChildren
   '/_authenticated/hydration': typeof AuthenticatedHydrationRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/processing'
     | '/quiz'
     | '/add'
+    | '/checkout'
     | '/dashboard'
     | '/focos'
     | '/hydration'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/processing'
     | '/quiz'
     | '/add'
+    | '/checkout'
     | '/dashboard'
     | '/focos'
     | '/hydration'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/processing'
     | '/quiz'
     | '/_authenticated/add'
+    | '/_authenticated/checkout'
     | '/_authenticated/dashboard'
     | '/_authenticated/focos'
     | '/_authenticated/hydration'
@@ -396,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/checkout': {
+      id: '/_authenticated/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/add': {
       id: '/_authenticated/add'
       path: '/add'
@@ -433,6 +452,7 @@ const AuthenticatedFocosRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAddRoute: typeof AuthenticatedAddRoute
+  AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFocosRoute: typeof AuthenticatedFocosRouteWithChildren
   AuthenticatedHydrationRoute: typeof AuthenticatedHydrationRoute
@@ -446,6 +466,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAddRoute: AuthenticatedAddRoute,
+  AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFocosRoute: AuthenticatedFocosRouteWithChildren,
   AuthenticatedHydrationRoute: AuthenticatedHydrationRoute,
