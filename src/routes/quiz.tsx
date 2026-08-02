@@ -19,7 +19,7 @@ export const Route = createFileRoute("/quiz")({
   }),
 });
 
-const TOTAL = 12;
+const TOTAL = 13;
 
 function haptic() {
   if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate?.(8);
