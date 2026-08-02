@@ -620,6 +620,36 @@ function Step({
     );
   }
 
+  if (step === 12) {
+    const opts = [
+      { k: "tiktok", e: "🎵", label: "TikTok" },
+      { k: "instagram", e: "📸", label: "Instagram" },
+      { k: "youtube", e: "▶️", label: "YouTube" },
+      { k: "friend", e: "🫶", label: t("ob.q13.friend", { defaultValue: "Friend or family" }) },
+      { k: "search", e: "🔎", label: t("ob.q13.search", { defaultValue: "Google / App Store" }) },
+      { k: "other", e: "✨", label: t("ob.q13.other", { defaultValue: "Somewhere else" }) },
+    ];
+    return (
+      <div>
+        <Title
+          title={t("ob.q13.title", { defaultValue: "How did you discover Neura AI?" })}
+          sub={t("ob.q13.sub", { defaultValue: "This helps us keep improving your experience." })}
+        />
+        <div className="space-y-2.5">
+          {opts.map((o) => (
+            <Option
+              key={o.k}
+              emoji={o.e}
+              active={d.source === o.k}
+              label={o.label}
+              onClick={() => pick({ source: o.k })}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Title title={t("ob.q12.title")} sub={t("ob.q12.sub")} />
