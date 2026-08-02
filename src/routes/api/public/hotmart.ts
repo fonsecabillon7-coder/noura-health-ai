@@ -137,8 +137,9 @@ export const Route = createFileRoute("/api/public/hotmart")({
           if (Object.keys(patch).length) {
             const { data: existing } = await supabaseAdmin
               .from("subscriptions").select("id").eq("user_id", userId).maybeSingle();
-            if (existing) await supabaseAdmin.from("subscriptions").update(patch).eq("user_id", userId);
-            else await supabaseAdmin.from("subscriptions").insert(patch);
+            if (existing) await (supabaseAdmin.from("subscriptions") as any).update(patch).eq("user_id", userId);
+            else await (supabaseAdmin.from("subscriptions") as any).insert(patch);
+
 
             await supabaseAdmin
               .from("profiles")
