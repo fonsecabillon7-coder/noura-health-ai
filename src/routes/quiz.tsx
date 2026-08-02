@@ -89,6 +89,9 @@ function Quiz() {
         return !!d.hydration;
       case 11:
         return !!d.cookTime;
+      case 12:
+        return !!d.source;
+
       default:
         return true;
     }
