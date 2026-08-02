@@ -27,6 +27,7 @@ import { Route as AuthenticatedHydrationRouteImport } from './routes/_authentica
 import { Route as AuthenticatedFocosRouteImport } from './routes/_authenticated.focos'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as AuthenticatedAddRouteImport } from './routes/_authenticated.add'
+import { Route as ApiPublicHotmartRouteImport } from './routes/api/public/hotmart'
 import { Route as AuthenticatedFocosHistoryRouteImport } from './routes/_authenticated.focos.history'
 
 const QuizRoute = QuizRouteImport.update({
@@ -118,6 +119,11 @@ const AuthenticatedAddRoute = AuthenticatedAddRouteImport.update({
   path: '/add',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ApiPublicHotmartRoute = ApiPublicHotmartRouteImport.update({
+  id: '/api/public/hotmart',
+  path: '/api/public/hotmart',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedFocosHistoryRoute =
   AuthenticatedFocosHistoryRouteImport.update({
     id: '/history',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/scans': typeof AuthenticatedScansRoute
   '/shopping': typeof AuthenticatedShoppingRoute
   '/focos/history': typeof AuthenticatedFocosHistoryRoute
+  '/api/public/hotmart': typeof ApiPublicHotmartRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/scans': typeof AuthenticatedScansRoute
   '/shopping': typeof AuthenticatedShoppingRoute
   '/focos/history': typeof AuthenticatedFocosHistoryRoute
+  '/api/public/hotmart': typeof ApiPublicHotmartRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/_authenticated/scans': typeof AuthenticatedScansRoute
   '/_authenticated/shopping': typeof AuthenticatedShoppingRoute
   '/_authenticated/focos/history': typeof AuthenticatedFocosHistoryRoute
+  '/api/public/hotmart': typeof ApiPublicHotmartRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/scans'
     | '/shopping'
     | '/focos/history'
+    | '/api/public/hotmart'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/scans'
     | '/shopping'
     | '/focos/history'
+    | '/api/public/hotmart'
   id:
     | '__root__'
     | '/'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/_authenticated/scans'
     | '/_authenticated/shopping'
     | '/_authenticated/focos/history'
+    | '/api/public/hotmart'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -260,6 +272,7 @@ export interface RootRouteChildren {
   PlanRoute: typeof PlanRoute
   ProcessingRoute: typeof ProcessingRoute
   QuizRoute: typeof QuizRoute
+  ApiPublicHotmartRoute: typeof ApiPublicHotmartRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -390,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAddRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/public/hotmart': {
+      id: '/api/public/hotmart'
+      path: '/api/public/hotmart'
+      fullPath: '/api/public/hotmart'
+      preLoaderRoute: typeof ApiPublicHotmartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/focos/history': {
       id: '/_authenticated/focos/history'
       path: '/history'
@@ -450,6 +470,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanRoute: PlanRoute,
   ProcessingRoute: ProcessingRoute,
   QuizRoute: QuizRoute,
+  ApiPublicHotmartRoute: ApiPublicHotmartRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
