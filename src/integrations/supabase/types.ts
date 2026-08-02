@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          props: Json
+          source: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          props?: Json
+          source?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          props?: Json
+          source?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       habit_logs: {
         Row: {
           completed_on: string
@@ -88,6 +115,42 @@ export type Database = {
         }
         Relationships: []
       }
+      hotmart_events: {
+        Row: {
+          created_at: string
+          email: string | null
+          error: string | null
+          event_id: string | null
+          event_type: string
+          id: string
+          payload: Json
+          processed: boolean
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          error?: string | null
+          event_id?: string | null
+          event_type: string
+          id?: string
+          payload?: Json
+          processed?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          error?: string | null
+          event_id?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed?: boolean
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       meals: {
         Row: {
           carbs: number
@@ -136,8 +199,48 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_settings: {
+        Row: {
+          active: boolean
+          checkout_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          key: string
+          name: string
+          price_usd: number
+          trial_days: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          checkout_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          key: string
+          name: string
+          price_usd?: number
+          trial_days?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          checkout_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          key?: string
+          name?: string
+          price_usd?: number
+          trial_days?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          acquisition_source: string | null
           activity_level: string | null
           age: number | null
           allergies: Json
@@ -160,6 +263,7 @@ export type Database = {
           id: string
           kcal_goal: number
           language: string
+          last_active_at: string | null
           measurement_system: string
           motivation: string | null
           name: string | null
@@ -175,6 +279,7 @@ export type Database = {
           weight_kg: number | null
         }
         Insert: {
+          acquisition_source?: string | null
           activity_level?: string | null
           age?: number | null
           allergies?: Json
@@ -197,6 +302,7 @@ export type Database = {
           id?: string
           kcal_goal?: number
           language?: string
+          last_active_at?: string | null
           measurement_system?: string
           motivation?: string | null
           name?: string | null
@@ -212,6 +318,7 @@ export type Database = {
           weight_kg?: number | null
         }
         Update: {
+          acquisition_source?: string | null
           activity_level?: string | null
           age?: number | null
           allergies?: Json
@@ -234,6 +341,7 @@ export type Database = {
           id?: string
           kcal_goal?: number
           language?: string
+          last_active_at?: string | null
           measurement_system?: string
           motivation?: string | null
           name?: string | null
@@ -385,6 +493,90 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          billing_cycle: string | null
+          cancelled_date: string | null
+          created_at: string
+          hotmart_subscriber_code: string | null
+          hotmart_transaction: string | null
+          hotmart_user_id: string | null
+          id: string
+          next_payment_date: string | null
+          plan_type: string
+          price_usd: number
+          product_id: string | null
+          status: string
+          subscription_start_date: string | null
+          trial_active: boolean
+          trial_end_date: string | null
+          trial_start_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_cycle?: string | null
+          cancelled_date?: string | null
+          created_at?: string
+          hotmart_subscriber_code?: string | null
+          hotmart_transaction?: string | null
+          hotmart_user_id?: string | null
+          id?: string
+          next_payment_date?: string | null
+          plan_type?: string
+          price_usd?: number
+          product_id?: string | null
+          status?: string
+          subscription_start_date?: string | null
+          trial_active?: boolean
+          trial_end_date?: string | null
+          trial_start_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_cycle?: string | null
+          cancelled_date?: string | null
+          created_at?: string
+          hotmart_subscriber_code?: string | null
+          hotmart_transaction?: string | null
+          hotmart_user_id?: string | null
+          id?: string
+          next_payment_date?: string | null
+          plan_type?: string
+          price_usd?: number
+          product_id?: string | null
+          status?: string
+          subscription_start_date?: string | null
+          trial_active?: boolean
+          trial_end_date?: string | null
+          trial_start_date?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       water_logs: {
         Row: {
           created_at: string
@@ -414,10 +606,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_premium: { Args: { _user_id: string }; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -544,6 +743,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
