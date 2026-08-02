@@ -113,6 +113,8 @@ export const detectIngredients = createServerFn({ method: "POST" })
     z.object({ imageDataUrl: z.string().min(20) }).parse(input),
   )
   .handler(async ({ data, context }) => {
+    const { assertFeatureAccess } = await import("@/lib/access.server");
+    await assertFeatureAccess(context.supabase as any, context.userId, "fridge");
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
     const lang = await getUserLanguage(context.supabase, context.userId);
@@ -146,6 +148,8 @@ export const analyzeFoodImage = createServerFn({ method: "POST" })
     z.object({ imageDataUrl: z.string().min(20) }).parse(input),
   )
   .handler(async ({ data, context }) => {
+    const { assertFeatureAccess } = await import("@/lib/access.server");
+    await assertFeatureAccess(context.supabase as any, context.userId, "scan");
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
     const lang = await getUserLanguage(context.supabase, context.userId);
@@ -212,6 +216,8 @@ export const generateRecipe = createServerFn({ method: "POST" })
     }).parse(input),
   )
   .handler(async ({ data, context }) => {
+    const { assertFeatureAccess } = await import("@/lib/access.server");
+    await assertFeatureAccess(context.supabase as any, context.userId, "recipe");
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
     const lang = await getUserLanguage(context.supabase, context.userId);
