@@ -22,7 +22,19 @@ function Dashboard() {
   useEffect(() => { if (pulse) { const t = setTimeout(() => setPulse(null), 900); return () => clearTimeout(t); } }, [pulse]);
   const mutate = useMutation({
     mutationFn: (ml: number) => addWater({ data: { ml } }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["dashboard"] }),
+    onMutate: async (ml: number) => {
+      await qc.cancelQueries({ queryKey: ["dashboard"] });
+      const prev = qc.getQueryData(["dashboard"]);
+      qc.setQueryData(["dashboard"], (old: any) =>
+        old ? { ...old, totals: { ...old.totals, waterMl: (old.totals?.waterMl ?? 0) + ml } } : old,
+      );
+      return { prev };
+    },
+    onError: (_e, _v, ctx: any) => { if (ctx?.prev) qc.setQueryData(["dashboard"], ctx.prev); },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["water-history"] });
+    },
   });
 
   const hour = new Date().getHours();
