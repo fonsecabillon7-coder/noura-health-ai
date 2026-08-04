@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getProfile, upsertProfile } from "@/lib/data.functions";
 import { useTranslation } from "react-i18next";
 import { LangSwitcher } from "@/components/lang-switcher";
+import { LANGUAGES } from "@/lib/i18n";
 import { Crown, ChevronRight, Target, Droplets, Flame, LogOut, History as HistoryIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/use-subscription";
