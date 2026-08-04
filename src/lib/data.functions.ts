@@ -94,21 +94,28 @@ export const logWater = createServerFn({ method: "POST" })
 
 export const getWaterHistory = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const from = new Date(); from.setDate(from.getDate() - 29); from.setHours(0,0,0,0);
-    const { data } = await context.supabase
+  .inputValidator((input: unknown) =>
+    z.object({ tzOffset: z.number().default(0) }).parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    // tzOffset = Date.getTimezoneOffset() (minutes, positive west of UTC)
+    const offsetMs = data.tzOffset * 60_000;
+    const localKey = (iso: string | Date) =>
+      new Date(new Date(iso).getTime() - offsetMs).toISOString().slice(0, 10);
+
+    const from = new Date(Date.now() - 30 * 86_400_000);
+    const { data: rows } = await context.supabase
       .from("water_logs").select("ml, logged_at")
       .eq("user_id", context.userId)
       .gte("logged_at", from.toISOString());
     const byDay: Record<string, number> = {};
-    (data ?? []).forEach((r: any) => {
-      const d = r.logged_at.slice(0, 10);
+    (rows ?? []).forEach((r: any) => {
+      const d = localKey(r.logged_at);
       byDay[d] = (byDay[d] ?? 0) + Number(r.ml);
     });
     const days: { date: string; ml: number }[] = [];
     for (let i = 29; i >= 0; i--) {
-      const d = new Date(); d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
+      const key = localKey(new Date(Date.now() - i * 86_400_000));
       days.push({ date: key, ml: byDay[key] ?? 0 });
     }
     const { data: profile } = await context.supabase
@@ -124,6 +131,42 @@ export const getWaterHistory = createServerFn({ method: "GET" })
       else break;
     }
     return { days, goal, avg, streak };
+  });
+
+// ============ Recipes ============
+export const listRecipes = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data } = await context.supabase
+      .from("recipes").select("*")
+      .eq("user_id", context.userId)
+      .order("created_at", { ascending: false })
+      .limit(60);
+    return data ?? [];
+  });
+
+export const toggleRecipeFavorite = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ id: z.string().uuid(), favorite: z.boolean() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await (context.supabase.from("recipes") as any)
+      .update({ favorite: data.favorite })
+      .eq("id", data.id).eq("user_id", context.userId);
+    return { ok: true };
+  });
+
+export const setRecipeImage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ id: z.string().uuid(), image_url: z.string().min(10) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await (context.supabase.from("recipes") as any)
+      .update({ image_url: data.image_url })
+      .eq("id", data.id).eq("user_id", context.userId);
+    return { ok: true };
   });
 
 
