@@ -50,25 +50,25 @@ function Profile() {
                   <div className="text-xs text-muted-foreground">{profile?.goal || ""}</div>
                 </div>
               </div>
-              <button onClick={() => nav({ to: premium ? "/checkout" : "/paywall", ...(premium ? { search: { cycle: "annual" as const } } : {}) } as any)} className="mt-4 flex w-full items-center justify-between rounded-2xl bg-gradient-to-r from-gold/25 to-gold/10 p-3">
-                <div className="flex items-center gap-2"><Crown className="h-5 w-5 text-gold" /><span className="font-semibold text-gold">{premium ? `Premium · ${status}` : "Upgrade to Premium"}</span></div>
-                <ChevronRight className="h-4 w-4 text-gold" />
-              </button>
+              {premium && (
+                <div className="mt-4 flex w-full items-center justify-between rounded-2xl bg-gradient-to-r from-gold/25 to-gold/10 p-3">
+                  <div className="flex items-center gap-2"><Crown className="h-5 w-5 text-gold" /><span className="font-semibold text-gold">{`Premium · ${status}`}</span></div>
+                </div>
+              )}
             </div>
           </div>
-          <LangSwitcher />
+          <LangSwitcher onChange={(code) => mut.mutate({ language: code, locale: code })} />
         </div>
 
         {/* Language */}
         <div className="glass-strong mt-4 rounded-[24px] p-5">
           <div className="text-xs text-muted-foreground">{t("profile.language")}</div>
-          <div className="mt-2 flex gap-2">
-            {[["en-US", "🇺🇸 English"], ["pt-BR", "🇧🇷 Português"]].map(([code, label]) => (
-              <button key={code} onClick={() => { i18n.changeLanguage(code); mut.mutate({ language: code, locale: code }); }}
-                className={`flex-1 rounded-2xl border py-2.5 text-xs ${(profile?.language || i18n.resolvedLanguage) === code ? "border-emerald/60 bg-emerald/10 text-emerald" : "border-white/8"}`}>
-                {label}
-              </button>
-            ))}
+          <div className="mt-2 flex items-center justify-between rounded-2xl border border-emerald/60 bg-emerald/10 px-4 py-3 text-sm text-emerald">
+            <span className="flex items-center gap-2">
+              <span className="text-lg">{activeLang.flag}</span>
+              <span className="font-semibold">{activeLang.native}</span>
+            </span>
+            <LangSwitcher className="!h-8 !w-8" onChange={(code) => mut.mutate({ language: code, locale: code })} />
           </div>
         </div>
 

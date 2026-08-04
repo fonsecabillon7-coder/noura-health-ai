@@ -49,6 +49,7 @@ export function LangSwitcher({
                       key={lng.code}
                       onClick={() => {
                         i18n.changeLanguage(lng.code);
+                        onChange?.(lng.code);
                         setOpen(false);
                       }}
                       className={`flex w-full items-center gap-3 rounded-2xl border p-3.5 text-left transition ${
