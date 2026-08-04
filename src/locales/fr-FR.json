@@ -199,5 +199,17 @@
       "legal": "Annulable à tout moment. Paiement sécurisé au checkout.",
       "save": "Économisez 79%"
     }
+  },
+  "recipes": {
+    "food": "Plat",
+    "drink": "Boisson",
+    "generate3": "Générer 3 options",
+    "options": "Choisissez votre préférée",
+    "saved": "Vos recettes",
+    "favorites": "Favoris",
+    "scanFridge": "Scanner le frigo/garde-manger",
+    "emptyIngs": "Scannez ou saisissez des ingrédients",
+    "addIng": "+ ajouter un ingrédient",
+    "scanError": "Impossible de détecter les ingrédients"
   }
 }

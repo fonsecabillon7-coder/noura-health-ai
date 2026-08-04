@@ -199,5 +199,17 @@
       "legal": "Jederzeit kündbar. Zahlung sicher im Checkout.",
       "save": "79% sparen"
     }
+  },
+  "recipes": {
+    "food": "Essen",
+    "drink": "Getränk",
+    "generate3": "3 Optionen generieren",
+    "options": "Wähle deinen Favoriten",
+    "saved": "Deine Rezepte",
+    "favorites": "Favoriten",
+    "scanFridge": "Kühlschrank/Vorrat scannen",
+    "emptyIngs": "Zutaten scannen oder eingeben",
+    "addIng": "+ Zutat hinzufügen",
+    "scanError": "Zutaten konnten nicht erkannt werden"
   }
 }

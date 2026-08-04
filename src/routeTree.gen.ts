@@ -17,6 +17,7 @@ import { Route as LocaleRouteImport } from './routes/locale'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiRecipeImageRouteImport } from './routes/api/recipe-image'
 import { Route as AuthenticatedShoppingRouteImport } from './routes/_authenticated.shopping'
 import { Route as AuthenticatedScansRouteImport } from './routes/_authenticated.scans'
 import { Route as AuthenticatedScanRouteImport } from './routes/_authenticated.scan'
@@ -69,6 +70,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRecipeImageRoute = ApiRecipeImageRouteImport.update({
+  id: '/api/recipe-image',
+  path: '/api/recipe-image',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedShoppingRoute = AuthenticatedShoppingRouteImport.update({
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/scan': typeof AuthenticatedScanRoute
   '/scans': typeof AuthenticatedScansRoute
   '/shopping': typeof AuthenticatedShoppingRoute
+  '/api/recipe-image': typeof ApiRecipeImageRoute
   '/focos/history': typeof AuthenticatedFocosHistoryRoute
   '/api/public/hotmart': typeof ApiPublicHotmartRoute
 }
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/scan': typeof AuthenticatedScanRoute
   '/scans': typeof AuthenticatedScansRoute
   '/shopping': typeof AuthenticatedShoppingRoute
+  '/api/recipe-image': typeof ApiRecipeImageRoute
   '/focos/history': typeof AuthenticatedFocosHistoryRoute
   '/api/public/hotmart': typeof ApiPublicHotmartRoute
 }
@@ -211,6 +219,7 @@ export interface FileRoutesById {
   '/_authenticated/scan': typeof AuthenticatedScanRoute
   '/_authenticated/scans': typeof AuthenticatedScansRoute
   '/_authenticated/shopping': typeof AuthenticatedShoppingRoute
+  '/api/recipe-image': typeof ApiRecipeImageRoute
   '/_authenticated/focos/history': typeof AuthenticatedFocosHistoryRoute
   '/api/public/hotmart': typeof ApiPublicHotmartRoute
 }
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/scan'
     | '/scans'
     | '/shopping'
+    | '/api/recipe-image'
     | '/focos/history'
     | '/api/public/hotmart'
   fileRoutesByTo: FileRoutesByTo
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/scan'
     | '/scans'
     | '/shopping'
+    | '/api/recipe-image'
     | '/focos/history'
     | '/api/public/hotmart'
   id:
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/_authenticated/scan'
     | '/_authenticated/scans'
     | '/_authenticated/shopping'
+    | '/api/recipe-image'
     | '/_authenticated/focos/history'
     | '/api/public/hotmart'
   fileRoutesById: FileRoutesById
@@ -296,6 +308,7 @@ export interface RootRouteChildren {
   PlanRoute: typeof PlanRoute
   ProcessingRoute: typeof ProcessingRoute
   QuizRoute: typeof QuizRoute
+  ApiRecipeImageRoute: typeof ApiRecipeImageRoute
   ApiPublicHotmartRoute: typeof ApiPublicHotmartRoute
 }
 
@@ -355,6 +368,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/recipe-image': {
+      id: '/api/recipe-image'
+      path: '/api/recipe-image'
+      fullPath: '/api/recipe-image'
+      preLoaderRoute: typeof ApiRecipeImageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/shopping': {
@@ -512,18 +532,9 @@ const rootRouteChildren: RootRouteChildren = {
   PlanRoute: PlanRoute,
   ProcessingRoute: ProcessingRoute,
   QuizRoute: QuizRoute,
+  ApiRecipeImageRoute: ApiRecipeImageRoute,
   ApiPublicHotmartRoute: ApiPublicHotmartRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

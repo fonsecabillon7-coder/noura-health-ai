@@ -15,11 +15,33 @@ function HydrationPage() {
   const qc = useQueryClient();
   const fetchHistory = useServerFn(getWaterHistory);
   const addWater = useServerFn(logWater);
-  const { data } = useQuery({ queryKey: ["water-history"], queryFn: () => fetchHistory() });
+  const tzOffset = new Date().getTimezoneOffset();
+  const { data } = useQuery({
+    queryKey: ["water-history"],
+    queryFn: () => fetchHistory({ data: { tzOffset } }),
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+  });
 
   const mutate = useMutation({
     mutationFn: (ml: number) => addWater({ data: { ml } }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["water-history"] }); qc.invalidateQueries({ queryKey: ["dashboard"] }); },
+    onMutate: async (ml: number) => {
+      await qc.cancelQueries({ queryKey: ["water-history"] });
+      const prev = qc.getQueryData(["water-history"]);
+      qc.setQueryData(["water-history"], (old: any) => {
+        if (!old?.days?.length) return old;
+        const days = old.days.map((d: any, i: number) =>
+          i === old.days.length - 1 ? { ...d, ml: d.ml + ml } : d,
+        );
+        return { ...old, days };
+      });
+      return { prev };
+    },
+    onError: (_e, _v, ctx: any) => { if (ctx?.prev) qc.setQueryData(["water-history"], ctx.prev); },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ["water-history"] });
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
+    },
   });
 
   const days = data?.days ?? [];

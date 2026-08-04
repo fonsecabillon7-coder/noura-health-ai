@@ -116,7 +116,17 @@
     "steps": "Steps",
     "logAsMeal": "Log as meal",
     "empty": "Nothing yet. Generate your first recipe.",
-    "error": "Couldn't generate recipe. Try different ingredients."
+    "error": "Couldn't generate recipe. Try different ingredients.",
+    "food": "Food",
+    "drink": "Drink",
+    "generate3": "Generate 3 options",
+    "options": "Choose your favorite",
+    "saved": "Your recipes",
+    "favorites": "Favorites",
+    "scanFridge": "Scan fridge/pantry",
+    "emptyIngs": "Scan or type ingredients",
+    "addIng": "+ add ingredient",
+    "scanError": "Could not detect ingredients"
   },
   "meals": {
     "title": "Meals",
