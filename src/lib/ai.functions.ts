@@ -4,8 +4,19 @@ import { generateText } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "./ai-gateway.server";
 
+const LANG_LABELS: Record<string, string> = {
+  "en-US": "English (United States)",
+  "pt-BR": "Brazilian Portuguese",
+  "es-ES": "Spanish (Latin America)",
+  es: "Spanish (Latin America)",
+  "fr-FR": "French",
+  fr: "French",
+  "de-DE": "German",
+  de: "German",
+};
+
 function langLabel(code: string) {
-  return code === "pt-BR" ? "Brazilian Portuguese" : "English";
+  return LANG_LABELS[code] ?? LANG_LABELS[code?.slice(0, 2)] ?? "English (United States)";
 }
 
 async function getUserLanguage(supabase: any, userId: string): Promise<string> {
