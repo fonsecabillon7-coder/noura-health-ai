@@ -365,9 +365,11 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          favorite: boolean
           id: string
           image_url: string | null
           ingredients: Json
+          kind: string
           language: string
           macros: Json
           prep_minutes: number | null
@@ -380,9 +382,11 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          favorite?: boolean
           id?: string
           image_url?: string | null
           ingredients?: Json
+          kind?: string
           language?: string
           macros?: Json
           prep_minutes?: number | null
@@ -395,9 +399,11 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          favorite?: boolean
           id?: string
           image_url?: string | null
           ingredients?: Json
+          kind?: string
           language?: string
           macros?: Json
           prep_minutes?: number | null
