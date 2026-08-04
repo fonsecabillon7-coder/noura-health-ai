@@ -261,6 +261,7 @@ export type Database = {
           height_cm: number | null
           hydration_habit: string | null
           id: string
+          is_admin: boolean | null
           kcal_goal: number
           language: string
           last_active_at: string | null
@@ -300,6 +301,7 @@ export type Database = {
           height_cm?: number | null
           hydration_habit?: string | null
           id?: string
+          is_admin?: boolean | null
           kcal_goal?: number
           language?: string
           last_active_at?: string | null
@@ -339,6 +341,7 @@ export type Database = {
           height_cm?: number | null
           hydration_habit?: string | null
           id?: string
+          is_admin?: boolean | null
           kcal_goal?: number
           language?: string
           last_active_at?: string | null
