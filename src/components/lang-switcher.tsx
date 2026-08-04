@@ -4,7 +4,13 @@ import { Globe, Check } from "lucide-react";
 import { useState } from "react";
 import { LANGUAGES } from "@/lib/i18n";
 
-export function LangSwitcher({ className = "" }: { className?: string }) {
+export function LangSwitcher({
+  className = "",
+  onChange,
+}: {
+  className?: string;
+  onChange?: (code: string) => void;
+}) {
   const { i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const current = i18n.resolvedLanguage || "en-US";
