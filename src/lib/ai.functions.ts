@@ -286,3 +286,73 @@ Macros are realistic estimates per serving. No markdown.`;
       throw error;
     }
   });
+
+// ============ Multiple recipe options (food or drink) ============
+const recipeOptionsSchema = z.object({
+  recipes: z.array(recipeSchema).min(1),
+});
+
+export const generateRecipeOptions = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        ingredients: z.string().min(2),
+        kind: z.enum(["food", "drink"]).default("food"),
+        count: z.number().int().min(1).max(5).default(3),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertFeatureAccess } = await import("@/lib/access.server");
+    await assertFeatureAccess(context.supabase as any, context.userId, "recipe");
+    const key = process.env.LOVABLE_API_KEY;
+    if (!key) throw new Error("Missing LOVABLE_API_KEY");
+    const lang = await getUserLanguage(context.supabase, context.userId);
+
+    const gateway = createLovableAiGatewayProvider(key);
+    const model = gateway(AI_MODEL);
+    const what = data.kind === "drink" ? "healthy drinks (smoothies, juices, teas, shakes)" : "healthy meals";
+
+    const prompt = `You are Neura AI's premium nutrition chef. Create ${data.count} DIFFERENT ${what} using mainly these ingredients: ${data.ingredients}.
+Respond entirely in ${langLabel(lang)}.
+
+Return ONLY valid JSON in this exact shape:
+{"recipes":[{"title":"...","description":"short premium description","servings":2,"prep_minutes":15,"ingredients":[{"item":"ingredient","amount":"amount"}],"steps":["step"],"macros":{"kcal":420,"protein":28,"carbs":35,"fat":16}}]}
+
+Rules: exactly ${data.count} distinct recipes, realistic macros per serving, no markdown, no extra text.`;
+
+    const result = await generateText({ model, prompt });
+    const cleaned = result.text.replace(/```json/gi, "```").replace(/```/g, "").trim();
+    const start = cleaned.indexOf("{");
+    const end = cleaned.lastIndexOf("}");
+    let parsed: unknown = null;
+    if (start !== -1 && end > start) {
+      try {
+        parsed = JSON.parse(cleaned.slice(start, end + 1));
+      } catch {
+        parsed = null;
+      }
+    }
+    const checked = recipeOptionsSchema.safeParse(parsed);
+    if (!checked.success) throw new Error("Could not generate recipes");
+
+    const rows = checked.data.recipes.slice(0, data.count).map((r) => ({
+      user_id: context.userId,
+      title: r.title,
+      description: r.description,
+      servings: r.servings,
+      prep_minutes: r.prep_minutes,
+      ingredients: r.ingredients,
+      steps: r.steps,
+      macros: r.macros,
+      language: lang,
+      kind: data.kind,
+    }));
+
+    const { data: saved, error } = await (context.supabase.from("recipes") as any)
+      .insert(rows)
+      .select("*");
+    if (error) throw error;
+    return saved ?? [];
+  });
