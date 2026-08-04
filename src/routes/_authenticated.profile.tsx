@@ -29,6 +29,8 @@ function Profile() {
 
   const name = profile?.name || "";
   const ms = profile?.measurement_system || "metric";
+  const langCode = profile?.language || i18n.resolvedLanguage || "en-US";
+  const activeLang = LANGUAGES.find((l) => l.code === langCode) ?? LANGUAGES[0];
 
   async function signOut() {
     await qc.cancelQueries();
