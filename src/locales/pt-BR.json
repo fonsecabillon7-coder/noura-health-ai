@@ -116,7 +116,17 @@
     "steps": "Modo de preparo",
     "logAsMeal": "Registrar como refeição",
     "empty": "Nada ainda. Gere sua primeira receita.",
-    "error": "Não consegui gerar a receita. Tente outros ingredientes."
+    "error": "Não consegui gerar a receita. Tente outros ingredientes.",
+    "food": "Comida",
+    "drink": "Bebida",
+    "generate3": "Gerar 3 opções",
+    "options": "Escolha sua favorita",
+    "saved": "Suas receitas",
+    "favorites": "Favoritas",
+    "scanFridge": "Escanear geladeira/despensa",
+    "emptyIngs": "Escaneie ou digite ingredientes",
+    "addIng": "+ adicionar ingrediente",
+    "scanError": "Não foi possível detectar ingredientes"
   },
   "meals": {
     "title": "Refeições",

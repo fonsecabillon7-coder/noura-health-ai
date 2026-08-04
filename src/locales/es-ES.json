@@ -199,5 +199,17 @@
       "legal": "Cancela cuando quieras. Pago seguro en el checkout.",
       "save": "Ahorra 79%"
     }
+  },
+  "recipes": {
+    "food": "Comida",
+    "drink": "Bebida",
+    "generate3": "Generar 3 opciones",
+    "options": "Elige tu favorita",
+    "saved": "Tus recetas",
+    "favorites": "Favoritas",
+    "scanFridge": "Escanear nevera/despensa",
+    "emptyIngs": "Escanea o escribe ingredientes",
+    "addIng": "+ añadir ingrediente",
+    "scanError": "No se pudieron detectar los ingredientes"
   }
 }
