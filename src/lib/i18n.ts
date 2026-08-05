@@ -1,33 +1,53 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import LanguageDetector from "i18next-browser-languagedetector";
 import enUS from "@/locales/en-US.json";
 import ptBR from "@/locales/pt-BR.json";
 import esES from "@/locales/es-ES.json";
 import frFR from "@/locales/fr-FR.json";
 import deDE from "@/locales/de-DE.json";
 
+export const SUPPORTED_LNGS = ["en-US", "pt-BR", "es-ES", "fr-FR", "de-DE"] as const;
+export const LANG_STORAGE_KEY = "neura.lang";
+
 if (!i18n.isInitialized) {
-  i18n
-    .use(LanguageDetector)
-    .use(initReactI18next)
-    .init({
-      resources: {
-        "en-US": { translation: enUS },
-        "pt-BR": { translation: ptBR },
-        "es-ES": { translation: esES },
-        "fr-FR": { translation: frFR },
-        "de-DE": { translation: deDE },
-      },
-      fallbackLng: "en-US",
-      supportedLngs: ["en-US", "pt-BR", "es-ES", "fr-FR", "de-DE"],
-      interpolation: { escapeValue: false },
-      detection: {
-        order: ["localStorage", "navigator"],
-        lookupLocalStorage: "neura.lang",
-        caches: ["localStorage"],
-      },
-    });
+  i18n.use(initReactI18next).init({
+    resources: {
+      "en-US": { translation: enUS },
+      "pt-BR": { translation: ptBR },
+      "es-ES": { translation: esES },
+      "fr-FR": { translation: frFR },
+      "de-DE": { translation: deDE },
+    },
+    // Always start in the same language on server and client so SSR markup
+    // matches; the detected/stored language is applied after hydration.
+    lng: "en-US",
+    fallbackLng: "en-US",
+    supportedLngs: SUPPORTED_LNGS as unknown as string[],
+    interpolation: { escapeValue: false },
+    react: { useSuspense: false },
+  });
+}
+
+/** Resolve the best language for this device: saved choice → browser → en-US. */
+export function detectLanguage(): string {
+  if (typeof window === "undefined") return "en-US";
+  const saved = window.localStorage.getItem(LANG_STORAGE_KEY);
+  if (saved && (SUPPORTED_LNGS as readonly string[]).includes(saved)) return saved;
+  const navLangs = [navigator.language, ...(navigator.languages ?? [])];
+  for (const l of navLangs) {
+    const exact = (SUPPORTED_LNGS as readonly string[]).find((s) => s.toLowerCase() === l.toLowerCase());
+    if (exact) return exact;
+    const base = (SUPPORTED_LNGS as readonly string[]).find((s) => s.slice(0, 2) === l.slice(0, 2));
+    if (base) return base;
+  }
+  return "en-US";
+}
+
+/** Apply (and persist) a language across the whole app. */
+export function applyLanguage(code: string) {
+  if (!(SUPPORTED_LNGS as readonly string[]).includes(code)) return;
+  if (typeof window !== "undefined") window.localStorage.setItem(LANG_STORAGE_KEY, code);
+  if (i18n.resolvedLanguage !== code) void i18n.changeLanguage(code);
 }
 
 export default i18n;
