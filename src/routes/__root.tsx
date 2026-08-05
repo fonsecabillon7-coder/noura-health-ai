@@ -120,6 +120,11 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  // Detect the device/saved language after hydration so SSR markup matches.
+  useEffect(() => {
+    applyLanguage(detectLanguage());
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
