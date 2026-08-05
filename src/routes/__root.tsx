@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import "../lib/i18n";
+import { applyLanguage, detectLanguage } from "@/lib/i18n";
 
 function NotFoundComponent() {
   return (
@@ -119,6 +120,11 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  // Detect the device/saved language after hydration so SSR markup matches.
+  useEffect(() => {
+    applyLanguage(detectLanguage());
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

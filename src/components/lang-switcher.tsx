@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Globe, Check } from "lucide-react";
 import { useState } from "react";
-import { LANGUAGES } from "@/lib/i18n";
+import { LANGUAGES, applyLanguage } from "@/lib/i18n";
 
 export function LangSwitcher({
   className = "",
@@ -48,7 +48,7 @@ export function LangSwitcher({
                     <button
                       key={lng.code}
                       onClick={() => {
-                        i18n.changeLanguage(lng.code);
+                        applyLanguage(lng.code);
                         onChange?.(lng.code);
                         setOpen(false);
                       }}
