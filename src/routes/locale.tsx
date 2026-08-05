@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Check, Search, Globe2, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { COUNTRIES, patchOnboarding } from "@/lib/noura";
-import { LANGUAGES } from "@/lib/i18n";
+import { LANGUAGES, applyLanguage } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/locale")({
@@ -37,14 +37,14 @@ function LocaleStep() {
   function pickCountry(code: string, suggested: string) {
     setCountry(code);
     setLang(suggested);
-    i18n.changeLanguage(suggested);
+    applyLanguage(suggested);
     patchOnboarding({ country: code, language: suggested });
     setTimeout(() => setPhase("language"), 260);
   }
 
   async function finish() {
     patchOnboarding({ country: country ?? undefined, language: lang });
-    i18n.changeLanguage(lang);
+    applyLanguage(lang);
     try {
       const { data } = await supabase.auth.getUser();
       if (data.user) {
@@ -142,7 +142,7 @@ function LocaleStep() {
                       whileTap={{ scale: 0.98 }}
                       onClick={() => {
                         setLang(l.code);
-                        i18n.changeLanguage(l.code);
+                        applyLanguage(l.code);
                       }}
                       className={`relative flex w-full items-center gap-3 overflow-hidden rounded-[24px] border p-4 text-left transition ${
                         active

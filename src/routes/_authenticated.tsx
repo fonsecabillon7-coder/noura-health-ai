@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { applyLanguage } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -29,7 +30,7 @@ function AuthedLayout() {
         .maybeSingle();
       const lang = (data as { language?: string } | null)?.language;
       if (!cancelled && lang && lang !== i18n.resolvedLanguage) {
-        i18n.changeLanguage(lang);
+        applyLanguage(lang);
       }
     })();
     return () => {
